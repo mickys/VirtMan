@@ -1,7 +1,7 @@
 {
-    "name": "ryanvade/virtman",
+    "name": "mickys/virtman",
     "description": "A LibVirt wrapper for Laravel.",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "type": "library",
     "require": {
         "illuminate/support": "^5.3",
