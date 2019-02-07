@@ -1,5 +1,16 @@
 <?php
-
+/**
+ * This file is part of the PHP VirtMan package
+ *
+ * PHP Version 7.2
+ *
+ * @category VirtMan\Config
+ * @package  VirtMan
+ * @author   Ryan Owens <RyanOwens@linux.com>
+ * @author   Micky Socaci <micky@nowlive.ro>
+ * @license  https://github.com/mickys/VirtMan/blob/master/LICENSE.md MIT
+ * @link     https://github.com/mickys/VirtMan/
+ */
 use VirtMan\VirtManServiceProvider;
 
 return [
@@ -17,7 +28,7 @@ return [
    'memoryQuota' => '0',
    'storageLocation' => '/var/lib/libvirt/images',
    'connectionType' => 'test',
-   'usingSSH' => False,
+   'usingSSH' => false,
    'sshUser' => '',
    'sshPassword' => '',
    'remoteUrl' => '',
