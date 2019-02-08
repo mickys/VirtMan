@@ -18,13 +18,13 @@ use VirtMan\Command\CreateMachine;
 use VirtMan\Command\CreateNetwork;
 use VirtMan\Command\CreateStorage;
 
-// Models
+// Exceptions
 use VirtMan\Exceptions\ImpossibleMemoryAllocationException;
 use VirtMan\Exceptions\ImpossibleStorageAllocationException;
 use VirtMan\Exceptions\InvalidArchitectureException;
-use VirtMan\Group\Group;
 
-// Exceptions
+// Models
+use VirtMan\Group\Group;
 use VirtMan\Machine\Machine;
 use VirtMan\Network\Network;
 use VirtMan\Storage\Storage;
@@ -112,14 +112,14 @@ class VirtMan
     public function __construct()
     {
         // Initialize Config Values
-        $this->authname = config('virtman.username');
-        $this->passphrase = config('virtman.password');
-        $this->maxQuota = (int) config('virtman.storageQuota');
-        $this->maxMemory = (int) config('virtman.memoryQuota');
+        $this->_authname = config('virtman.username');
+        $this->_passphrase = config('virtman.password');
+        $this->_maxQuota = (int) config('virtman.storageQuota');
+        $this->_maxMemory = (int) config('virtman.memoryQuota');
         // Attempt to connect to LibVirt
         $this->_connection = $this->_connect();
         // Initialize Environment Values
-        $this->machineTypes = $this->getMachineTypes();
+        $this->_machineTypes = $this->getMachineTypes();
 
     }
 
