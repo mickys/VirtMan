@@ -17,6 +17,7 @@ namespace VirtMan;
 use VirtMan\Command\CreateMachine;
 use VirtMan\Command\CreateNetwork;
 use VirtMan\Command\CreateStorage;
+use VirtMan\Command\ListNetworks;
 
 // Exceptions
 use VirtMan\Exceptions\ImpossibleMemoryAllocationException;
@@ -106,18 +107,22 @@ class VirtMan
      * VirtMan
      *
      * VirtMan Constructor
-     *
+     * 
+     * @param string $remoteUrl Libvirt machine URI
+     * 
      * @return TODO
      */
-    public function __construct()
+    public function __construct( string $remoteUrl )
     {
         // Initialize Config Values
-        $this->_authname = config('virtman.username');
-        $this->_passphrase = config('virtman.password');
+        // $this->_authname = config('virtman.username');
+        // $this->_passphrase = config('virtman.password');
         $this->_maxQuota = (int) config('virtman.storageQuota');
         $this->_maxMemory = (int) config('virtman.memoryQuota');
+        
         // Attempt to connect to LibVirt
-        $this->_connection = $this->_connect();
+        $this->_connection = $this->_connect($remoteUrl);
+        
         // Initialize Environment Values
         $this->_machineTypes = $this->getMachineTypes();
 
@@ -140,17 +145,13 @@ class VirtMan
      *
      * Authenticate with Libvirt and get the connection resource
      *
+     * @param string $remoteUrl Libvirt machine URI
+     * 
      * @return Libvirt Connection resource
      */
-    private function _connect()
+    private function _connect(string $remoteUrl)
     {
-        $URI = $this->getConnectionURI();
-        return libvirt_connect(
-            $URI, false, [
-                VIR_CRED_AUTHNAME => $this->_authname,
-                VIR_CRED_PASSPHRASE => $this->_passphrase,
-            ]
-        );
+        return libvirt_connect($remoteUrl, false, []);
     }
 
     /**
@@ -194,6 +195,8 @@ class VirtMan
      */
     public function getMachineTypes()
     {
+        // disabled for now.
+        /*
         $keys = array_keys(libvirt_connect_get_machine_types($this->_connection));
         $types = [];
         foreach ($keys as $type) {
@@ -201,25 +204,26 @@ class VirtMan
             array_push($types, substr_replace($type, "", -1, 1));
         }
         return $types;
-    }
+        */
 
-    /**
-     * Get Connection URI
-     *
-     * Read from the VirtMan config to build the connection URI
-     *
-     * @return string
-     */
-    public function getConnectionURI()
-    {
-        $URI = config('virtman.connectionType');
-        if (config('virtman.usingSSH')) {
-            $URI .= "+ssh:///" . config('virtman.sshUser') . "@";
-            $URI .= config('virtman.remoteUrl') . "/" . config('virtman.daemonMode');
-        } else {
-            $URI .= ":///" . config('virtman.daemonMode');
+        /*
+          libvirt_connect_get_machine_types seems to be failing in the 
+          latest version, so we're using libvirt_connect_get_capabilities
+          and parsing the xml to get these see libvirt.c line 2553
+        
+        $results = array();
+        $xml = libvirt_connect_get_capabilities($this->_connection);
+
+        $data = simplexml_load_string($xml);
+
+        foreach ($data->guest as $guest) {
+            foreach ($guest->arch->machine as $machine) {
+                print_r($machine);
+            }
         }
-        return $URI;
+
+        return $xml;
+        */
     }
 
     /**
@@ -316,6 +320,25 @@ class VirtMan
             $network,
             $this->_connection
         );
+        return $command->run();
+    }
+
+    /**
+     * List Networks
+     *
+     * Get Network list from connected node 
+     *
+     * @param int $filter VIR_NETWORKS_{ACTIVE|INACTIVE|ALL}
+     * 
+     * @return array
+     */
+    public function listNetworks(int $filter = null)
+    {
+        if ($filter === null) {
+            $command = new ListNetworks($this->_connection);
+        } else {
+            $command = new ListNetworks($this->_connection, $filter);
+        }
         return $command->run();
     }
 }
