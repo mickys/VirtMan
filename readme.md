@@ -1,6 +1,6 @@
 # VirtMan
 A Libvirt PHP wrapper library for the [Laravel Framework](https://laravel.com/).
-_version **0.0.1**_
+_version **0.0.2**_
 ## Requirements
 * PHP >= 7.0
 * Libvirt PHP extension
@@ -58,7 +58,8 @@ $machine = $virtMan->createMachine("TestMachine", "Linux", 2048, 1, "x86_64", [
 - [ ] Delete Storage Pools
 - [ ] Delete Networks
 - [ ] Delete Machine Groups
-- [ ] List Machines
+- [x] List Networks
+- [x] List Machines
 - [ ] Change Machine Settings
 - [ ] Change Machine Networks
 - [ ] Add a Machine to a Network
