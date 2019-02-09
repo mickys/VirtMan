@@ -66,3 +66,7 @@ $machine = $virtMan->createMachine("TestMachine", "Linux", 2048, 1, "x86_64", [
 - [ ] Clone a Machine
 - [ ] Add Storage to a Storage Pool
 - [ ] Manage Install Images
+
+## Credits
+
+Forked from ryanvade/VirtMan
