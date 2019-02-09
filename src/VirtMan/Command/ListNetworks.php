@@ -6,7 +6,6 @@
  *
  * @category VirtMan\Command
  * @package  VirtMan
- * @author   Ryan Owens <RyanOwens@linux.com>
  * @author   Micky Socaci <micky@nowlive.ro>
  * @license  https://github.com/mickys/VirtMan/blob/master/LICENSE.md MIT
  * @link     https://github.com/mickys/VirtMan/
@@ -20,7 +19,6 @@ use VirtMan\Command\Command;
  *
  * @category VirtMan\Command
  * @package  VirtMan
- * @author   Ryan Owens <RyanOwens@linux.com>
  * @author   Micky Socaci <micky@nowlive.ro>
  * @license  https://github.com/mickys/VirtMan/blob/master/LICENSE.md MIT
  * @link     https://github.com/mickys/VirtMan/
@@ -34,18 +32,18 @@ class ListNetworks extends Command
     ];
 
     /**
-     * Libvirt resource from Machine creation
+     * Libvirt filter flag
      *
      * @var Filter int flag
      */
     private $_filter = null;
 
     /**
-     * Libvirt resource from Machine creation
+     * Libvirt Connection
      *
      * @var Libvirt Connection Resource
      */
-    private $_conn = null;
+    private $_connection = null;
 
 
     /**
@@ -62,7 +60,7 @@ class ListNetworks extends Command
         $connection,
         int $filter = VIR_NETWORKS_ALL
     ) {
-        $this->_conn = $connection;
+        $this->_connection = $connection;
         $this->_filter = $filter;
     }
 
@@ -105,6 +103,6 @@ class ListNetworks extends Command
      */
     public function run()
     {
-        return libvirt_list_networks($this->_conn, $this->_filter);
+        return libvirt_list_networks($this->_connection, $this->_filter);
     }
 }

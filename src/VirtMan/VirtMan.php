@@ -18,6 +18,7 @@ use VirtMan\Command\CreateMachine;
 use VirtMan\Command\CreateNetwork;
 use VirtMan\Command\CreateStorage;
 use VirtMan\Command\ListNetworks;
+use VirtMan\Command\ListMachines;
 
 // Exceptions
 use VirtMan\Exceptions\ImpossibleMemoryAllocationException;
@@ -338,6 +339,25 @@ class VirtMan
             $command = new ListNetworks($this->_connection);
         } else {
             $command = new ListNetworks($this->_connection, $filter);
+        }
+        return $command->run();
+    }
+
+    /**
+     * List Machines
+     *
+     * Get Machines list from connected node 
+     *
+     * @param int $filter ALL = 1 | ACTIVE = 2 | INACTIVE = 3
+     * 
+     * @return array
+     */
+    public function listMachines(int $filter = null)
+    {
+        if ($filter === null) {
+            $command = new ListMachines($this->_connection);
+        } else {
+            $command = new ListMachines($this->_connection, $filter);
         }
         return $command->run();
     }
