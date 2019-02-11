@@ -50,4 +50,16 @@ abstract class UnitBaseTest extends TestCase
         );
         $this->assertTrue(true);
     }
+
+    /**
+     * Test teardown
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
+        unset($this->connection);
+    }
+    
 }

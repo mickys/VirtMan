@@ -39,14 +39,6 @@ class ListNetworks extends Command
     private $_filter = null;
 
     /**
-     * Libvirt Connection
-     *
-     * @var Libvirt Connection Resource
-     */
-    private $_connection = null;
-
-
-    /**
      * List Networks Command
      *
      * List Networks command constructor
@@ -60,8 +52,18 @@ class ListNetworks extends Command
         $connection,
         int $filter = VIR_NETWORKS_ALL
     ) {
-        $this->_connection = $connection;
+        parent::__construct("ListNetworks", $connection);
         $this->_filter = $filter;
+    }
+
+    /**
+     * Get current Filter
+     * 
+     * @return int
+     */
+    public function getFilter()
+    {
+        return $this->_filter;
     }
 
     /**
@@ -103,6 +105,6 @@ class ListNetworks extends Command
      */
     public function run()
     {
-        return libvirt_list_networks($this->_connection, $this->_filter);
+        return libvirt_list_networks($this->connection, $this->_filter);
     }
 }
