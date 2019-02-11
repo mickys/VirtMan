@@ -12,7 +12,7 @@
  */
 namespace VirtMan\Tests\Unit\VirtMan;
 
-use VirtMan\Command\ListNetworks;
+// use VirtMan\Command\ListNetworks;
 
 /**
  * BaseTest
@@ -25,6 +25,9 @@ use VirtMan\Command\ListNetworks;
  */
 class ListNetworksTest extends UnitBaseTest
 {
+    public $methodName = "ListNetworks";
+    public $methodFullName = "VirtMan\Command\ListNetworks";
+
     /**
      * Test if connection property is set correctly
      * 
@@ -32,7 +35,7 @@ class ListNetworksTest extends UnitBaseTest
      */
     public function testSetConnectionProperty()
     {
-        $command = new ListNetworks($this->connection);
+        $command = new $this->methodFullName($this->connection);
         $this->assertEquals($this->connection, $command->getConnection());
     }
 
@@ -43,8 +46,8 @@ class ListNetworksTest extends UnitBaseTest
      */
     public function testSetCommandNameProperty()
     {
-        $command = new ListNetworks($this->connection);
-        $this->assertEquals("ListNetworks", $command->getName());
+        $command = new $this->methodFullName($this->connection);
+        $this->assertEquals($this->methodName, $command->getName());
     }
 
     /**
@@ -54,16 +57,16 @@ class ListNetworksTest extends UnitBaseTest
      */
     public function testWhenConstructedFiltersAreProperlySet()
     {
-        $filter = ListNetworks::$flags["ALL"];
-        $command = new ListNetworks($this->connection, $filter);
+        $filter = $this->methodFullName::$flags["ALL"];
+        $command = new $this->methodFullName($this->connection, $filter);
         $this->assertEquals($filter, $command->getFilter());
 
-        $filter = ListNetworks::$flags["ACTIVE"];
-        $command = new ListNetworks($this->connection, $filter);
+        $filter = $this->methodFullName::$flags["ACTIVE"];
+        $command = new $this->methodFullName($this->connection, $filter);
         $this->assertEquals($filter, $command->getFilter());
 
-        $filter = ListNetworks::$flags["INACTIVE"];
-        $command = new ListNetworks($this->connection, $filter);
+        $filter = $this->methodFullName::$flags["INACTIVE"];
+        $command = new $this->methodFullName($this->connection, $filter);
         $this->assertEquals($filter, $command->getFilter());
     }
 
@@ -74,10 +77,24 @@ class ListNetworksTest extends UnitBaseTest
      */
     public function testRunCommandWithInactiveFilteringShouldBeEmpty()
     {
-        $command = new ListNetworks(
-            $this->connection, ListNetworks::$flags["INACTIVE"]
+        $command = new $this->methodFullName(
+            $this->connection, $this->methodFullName::$flags["INACTIVE"]
         );
         $output = $command->run();
         $this->assertEquals([], $output);
+    }
+
+    /**
+     * Test if command returns expected output
+     * 
+     * @return void
+     */
+    public function testRunCommandWithActiveFilteringShouldNotBeEmpty()
+    {
+        $command = new $this->methodFullName(
+            $this->connection, $this->methodFullName::$flags["ACTIVE"]
+        );
+        $output = $command->run();
+        $this->assertEquals(true, in_array("default", $output));
     }
 }

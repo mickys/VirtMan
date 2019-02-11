@@ -25,6 +25,9 @@ use VirtMan\Command\ListMachines;
  */
 class ListMachinesTest extends UnitBaseTest
 {
+    public $methodName = "ListMachines";
+    public $methodFullName = "VirtMan\Command\ListMachines";
+
     /**
      * Test if connection property is set correctly
      * 
@@ -32,7 +35,7 @@ class ListMachinesTest extends UnitBaseTest
      */
     public function testSetConnectionProperty()
     {
-        $command = new ListMachines($this->connection);
+        $command = new $this->methodFullName($this->connection);
         $this->assertEquals($this->connection, $command->getConnection());
     }
 
@@ -43,8 +46,8 @@ class ListMachinesTest extends UnitBaseTest
      */
     public function testSetCommandNameProperty()
     {
-        $command = new ListMachines($this->connection);
-        $this->assertEquals("ListMachines", $command->getName());
+        $command = new $this->methodFullName($this->connection);
+        $this->assertEquals($this->methodName, $command->getName());
     }
 
     /**
@@ -54,16 +57,16 @@ class ListMachinesTest extends UnitBaseTest
      */
     public function testWhenConstructedFiltersAreProperlySet()
     {
-        $filter = ListMachines::$flags["ALL"];
-        $command = new ListMachines($this->connection, $filter);
+        $filter = $this->methodFullName::$flags["ALL"];
+        $command = new $this->methodFullName($this->connection, $filter);
         $this->assertEquals($filter, $command->getFilter());
 
-        $filter = ListMachines::$flags["ACTIVE"];
-        $command = new ListMachines($this->connection, $filter);
+        $filter = $this->methodFullName::$flags["ACTIVE"];
+        $command = new $this->methodFullName($this->connection, $filter);
         $this->assertEquals($filter, $command->getFilter());
 
-        $filter = ListMachines::$flags["INACTIVE"];
-        $command = new ListMachines($this->connection, $filter);
+        $filter = $this->methodFullName::$flags["INACTIVE"];
+        $command = new $this->methodFullName($this->connection, $filter);
         $this->assertEquals($filter, $command->getFilter());
     }
 
@@ -74,10 +77,25 @@ class ListMachinesTest extends UnitBaseTest
      */
     public function testRunCommandWithInactiveFilteringShouldBeEmpty()
     {
-        $command = new ListMachines(
-            $this->connection, ListMachines::$flags["INACTIVE"]
+        $command = new $this->methodFullName(
+            $this->connection, $this->methodFullName::$flags["INACTIVE"]
         );
         $output = $command->run();
         $this->assertEquals([], $output);
     }
+
+    /**
+     * Test if command returns expected output
+     * 
+     * @return void
+     */
+    public function testRunCommandWithActiveFilteringShouldNotBeEmpty()
+    {
+        $command = new $this->methodFullName(
+            $this->connection, $this->methodFullName::$flags["ACTIVE"]
+        );
+        $output = $command->run();
+        $this->assertEquals(true, in_array("test", $output));
+    }
+    
 }
