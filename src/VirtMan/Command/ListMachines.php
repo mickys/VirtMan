@@ -44,14 +44,6 @@ class ListMachines extends Command
     private $_filter = null;
 
     /**
-     * Libvirt Connection
-     *
-     * @var Libvirt Connection Resource
-     */
-    private $_connection = null;
-
-
-    /**
      * List Machines Command
      *
      * List Machines command constructor
@@ -65,8 +57,18 @@ class ListMachines extends Command
         $connection,
         int $filter = 1
     ) {
-        $this->_connection = $connection;
+        parent::__construct("ListMachines", $connection);
         $this->_filter = $filter;
+    }
+
+    /**
+     * Get current Filter
+     * 
+     * @return int
+     */
+    public function getFilter()
+    {
+        return $this->_filter;
     }
 
     /**
@@ -109,13 +111,13 @@ class ListMachines extends Command
     public function run()
     {
         if ($this->_filter === self::$flags["ALL"]) {
-            return libvirt_list_domains($this->_connection);
+            return libvirt_list_domains($this->connection);
 
         } else if ($this->_filter === self::$flags["ACTIVE"]) {
-            return libvirt_list_active_domains($this->_connection);
+            return libvirt_list_active_domains($this->connection);
             
         } else if ($this->_filter === self::$flags["INACTIVE"]) {
-            return libvirt_list_inactive_domains($this->_connection);
+            return libvirt_list_inactive_domains($this->connection);
         }
 
     }

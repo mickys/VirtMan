@@ -8,16 +8,35 @@
         "illuminate/database": "^5.3",
         "doctrine/dbal": "^2.5"
     },
+    "require-dev": {
+        "phpunit/phpunit": "^7.0"
+    },
     "license": "MIT",
     "authors": [
         {
             "name": "Ryan Owens",
             "email": "RyanOwens@linux.com"
+        },
+        {
+            "name": "Micky Socaci",
+            "email": "micky@nowlive.ro"
         }
     ],
     "autoload": {
-      "psr-4": {
-        "VirtMan\\": "src/VirtMan"
+        "psr-4": {
+            "VirtMan\\": "src/VirtMan"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "VirtMan\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+      "laravel": {
+          "providers": [
+              "VirtMan\\VirtManServiceProvider"
+          ]
       }
-    }
+  }
 }

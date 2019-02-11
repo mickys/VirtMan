@@ -31,6 +31,6 @@ return [
    'usingSSH' => false,
    'sshUser' => '',
    'sshPassword' => '',
-   'remoteUrl' => '',
+   'remoteUrl' => 'test:///default"', // Test "mock" driver
    'daemonMode' => 'default'
 ];
