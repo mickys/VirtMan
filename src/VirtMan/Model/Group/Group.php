@@ -6,14 +6,13 @@
  *
  * @category VirtMan\Group
  * @package  VirtMan
- * @author   Ryan Owens <RyanOwens@linux.com>
  * @author   Micky Socaci <micky@nowlive.ro>
  * @license  https://github.com/mickys/VirtMan/blob/master/LICENSE.md MIT
  * @link     https://github.com/mickys/VirtMan/
  */
-namespace VirtMan\Group;
+namespace VirtMan\Model\Group;
 
-use VirtMan\Machine\Machine;
+use VirtMan\Model\Machine\Machine;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -21,7 +20,6 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @category VirtMan\Group
  * @package  VirtMan
- * @author   Ryan Owens <RyanOwens@linux.com>
  * @author   Micky Socaci <micky@nowlive.ro>
  * @license  https://github.com/mickys/VirtMan/blob/master/LICENSE.md MIT
  * @link     https://github.com/mickys/VirtMan/
@@ -44,6 +42,6 @@ class Group extends Model
      */
     public function machines()
     {
-        return $this->hasMany('VirtMan\Machine\Machine');
+        return $this->hasMany('VirtMan\Model\Machine\Machine');
     }
 }

@@ -13,8 +13,7 @@
 namespace VirtMan\Tests\Unit\VirtMan;
 
 use VirtMan\VirtMan;
-
-use PHPUnit\Framework\TestCase;
+use VirtMan\Tests\TestCase as TestCase;
 
 /**
  * BaseTest

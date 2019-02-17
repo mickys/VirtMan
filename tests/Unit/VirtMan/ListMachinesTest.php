@@ -12,8 +12,6 @@
  */
 namespace VirtMan\Tests\Unit\VirtMan;
 
-use VirtMan\Command\ListMachines;
-
 /**
  * BaseTest
  *

@@ -6,23 +6,21 @@
  *
  * @category VirtMan\Storage
  * @package  VirtMan
- * @author   Ryan Owens <RyanOwens@linux.com>
  * @author   Micky Socaci <micky@nowlive.ro>
  * @license  https://github.com/mickys/VirtMan/blob/master/LICENSE.md MIT
  * @link     https://github.com/mickys/VirtMan/
  */
-namespace VirtMan\Storage;
+namespace VirtMan\Model\Storage;
 
-use VirtMan\Machine\Machine;
-use Illuminate\Database\Eloquent\Model;
+use VirtMan\Model\Machine\Machine;
 use VirtMan\Exceptions\NoLibvirtConnectionException;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * Storage Model
  *
  * @category VirtMan\Storage
  * @package  VirtMan
- * @author   Ryan Owens <RyanOwens@linux.com>
  * @author   Micky Socaci <micky@nowlive.ro>
  * @license  https://github.com/mickys/VirtMan/blob/master/LICENSE.md MIT
  * @link     https://github.com/mickys/VirtMan/

@@ -6,42 +6,34 @@
  *
  * @category VirtMan\Machine
  * @package  VirtMan
- * @author   Ryan Owens <RyanOwens@linux.com>
  * @author   Micky Socaci <micky@nowlive.ro>
  * @license  https://github.com/mickys/VirtMan/blob/master/LICENSE.md MIT
  * @link     https://github.com/mickys/VirtMan/
  */
-namespace VirtMan\Machine;
+namespace VirtMan\Model\Node;
 
-use VirMan\Group\Group;
-use VirtMan\Network\Network;
-use VirtMan\Storage\Storage;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Machine Model
+ * Node Model
  *
- * @category VirtMan\Machine
+ * @category VirtMan\Node
  * @package  VirtMan
- * @author   Ryan Owens <RyanOwens@linux.com>
  * @author   Micky Socaci <micky@nowlive.ro>
  * @license  https://github.com/mickys/VirtMan/blob/master/LICENSE.md MIT
  * @link     https://github.com/mickys/VirtMan/
  */
-class Machine extends Model
+class Node extends Model
 {
     /*
-     * Machine Model:
+     * Node:
      * int id
      * string name
-     * string type
+     * string url
      * string status
-     * string arch
-     * int memory (mB)
-     * int cpus
-     * date started_at
-     * date stopped_at
-     * date timestamps
+     * date sync_at
+     * date created_at
+     * date updated_at
      */
 
     /**
@@ -49,7 +41,7 @@ class Machine extends Model
      *
      * @var string
      */
-    protected $table = 'virtman_machines';
+    protected $table = 'virtman_nodes';
 
     /**
      * Array specifying which columns can be mass assignable
@@ -58,14 +50,18 @@ class Machine extends Model
      */
     protected $fillable = [
         'name',
-        'type',
+        'url',
         'status',
-        'arch',
-        'memory',
-        'cpus',
-        'started_at',
-        'stopped_at'
+        'sync_at',
+        'created_at',
     ];
+
+    /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
+    public $timestamps = true;
 
     /**
      * Machines Groups
@@ -132,9 +128,9 @@ class Machine extends Model
     }
 
     /**
-     * Machines Networks
+     * Add Machines Storage
      *
-     * Get the networks a machine belongs to.
+     * Add Storage
      *
      * @param TODO $storage TODO
      * 
@@ -144,4 +140,5 @@ class Machine extends Model
     {
         // TODO
     }
+
 }

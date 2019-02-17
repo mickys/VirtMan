@@ -6,7 +6,6 @@
  *
  * @category VirtMan\Config
  * @package  VirtMan
- * @author   Ryan Owens <RyanOwens@linux.com>
  * @author   Micky Socaci <micky@nowlive.ro>
  * @license  https://github.com/mickys/VirtMan/blob/master/LICENSE.md MIT
  * @link     https://github.com/mickys/VirtMan/
