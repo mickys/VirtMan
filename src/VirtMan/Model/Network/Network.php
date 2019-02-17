@@ -6,14 +6,13 @@
  *
  * @category VirtMan\Network
  * @package  VirtMan
- * @author   Ryan Owens <RyanOwens@linux.com>
  * @author   Micky Socaci <micky@nowlive.ro>
  * @license  https://github.com/mickys/VirtMan/blob/master/LICENSE.md MIT
  * @link     https://github.com/mickys/VirtMan/
  */
-namespace VirtMan\Network;
+namespace VirtMan\Model\Network;
 
-use VirtMan\Machine\Machine;
+use VirtMan\Model\Machine\Machine;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -21,7 +20,6 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @category VirtMan\Network
  * @package  VirtMan
- * @author   Ryan Owens <RyanOwens@linux.com>
  * @author   Micky Socaci <micky@nowlive.ro>
  * @license  https://github.com/mickys/VirtMan/blob/master/LICENSE.md MIT
  * @link     https://github.com/mickys/VirtMan/
@@ -64,6 +62,6 @@ class Network extends Model
      */
     public function machines()
     {
-        return $this->hasMany('VirtMan\Machine\Machine');
+        return $this->hasMany('VirtMan\Model\Machine\Machine');
     }
 }

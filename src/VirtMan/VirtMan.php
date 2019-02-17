@@ -6,7 +6,6 @@
  * 
  * @category VirtMan
  * @package  VirtMan
- * @author   Ryan Owens <RyanOwens@linux.com>
  * @author   Micky Socaci <micky@nowlive.ro>
  * @license  https://github.com/mickys/VirtMan/blob/master/LICENSE.md MIT
  * @link     https://github.com/mickys/VirtMan/
@@ -26,24 +25,22 @@ use VirtMan\Exceptions\ImpossibleStorageAllocationException;
 use VirtMan\Exceptions\InvalidArchitectureException;
 
 // Models
-use VirtMan\Group\Group;
-use VirtMan\Machine\Machine;
-use VirtMan\Network\Network;
-use VirtMan\Storage\Storage;
+use VirtMan\Model\Group\Group;
+use VirtMan\Model\Machine\Machine;
+use VirtMan\Model\Network\Network;
+use VirtMan\Model\Storage\Storage;
 
 /**
  * VirtMan main class
  *
  * @category VirtMan
  * @package  VirtMan
- * @author   Ryan Owens <RyanOwens@linux.com>
  * @author   Micky Socaci <micky@nowlive.ro>
  * @license  https://github.com/mickys/VirtMan/blob/master/LICENSE.md MIT
  * @link     https://github.com/mickys/VirtMan/
  */
 class VirtMan
 {
-
     /**
      * Library Version
      *
@@ -110,8 +107,8 @@ class VirtMan
      * VirtMan Constructor
      * 
      * @param string $remoteUrl Libvirt machine URI
-     * 
-     * @return TODO
+     *
+     * @return
      */
     public function __construct( string $remoteUrl )
     {
@@ -126,7 +123,6 @@ class VirtMan
         
         // Initialize Environment Values
         $this->_machineTypes = $this->getMachineTypes();
-
     }
 
     /**
@@ -352,9 +348,9 @@ class VirtMan
      * 
      * @return array
      */
-    public function listMachines(int $filter = null)
+    public function listMachines(int $filter = 0)
     {
-        if ($filter === null) {
+        if ($filter === 0) {
             $command = new ListMachines($this->_connection);
         } else {
             $command = new ListMachines($this->_connection, $filter);

@@ -6,7 +6,6 @@
  *
  * @category VirtMan\Command
  * @package  VirtMan
- * @author   Ryan Owens <RyanOwens@linux.com>
  * @author   Micky Socaci <micky@nowlive.ro>
  * @license  https://github.com/mickys/VirtMan/blob/master/LICENSE.md MIT
  * @link     https://github.com/mickys/VirtMan/
@@ -14,14 +13,13 @@
 namespace VirtMan\Command;
 
 use VirtMan\Command\Command;
-use VirtMan\Storage\Storage;
+use VirtMan\Model\Storage\Storage;
 
 /**
  * CreateStorage Command
  *
  * @category VirtMan\Command
  * @package  VirtMan
- * @author   Ryan Owens <RyanOwens@linux.com>
  * @author   Micky Socaci <micky@nowlive.ro>
  * @license  https://github.com/mickys/VirtMan/blob/master/LICENSE.md MIT
  * @link     https://github.com/mickys/VirtMan/
@@ -89,15 +87,17 @@ class CreateStorage extends Command
      *
      * Command constructor
      *
-     * @param string           $storageName Storage name
-     * @param int              $size        Size
-     * @param string           $type        Type
-     * @param Libvirt Resource $connection  Connection resource
+     * @param string           $storageName         Storage name
+     * @param string           $baseStorageLocation Storage name
+     * @param int              $size                Size
+     * @param string           $type                Type
+     * @param Libvirt Resource $connection          Connection resource
      * 
      * @return None
      */
     public function __construct(
         string $storageName,
+        string $baseStorageLocation,
         int $size,
         string $type,
         $connection
@@ -105,10 +105,38 @@ class CreateStorage extends Command
         $this->_storageName = $storageName;
         $this->_size = $size;
         $this->_type = $type;
-        $this->_baseStorageLocation = config('virtman.storageLocation');
-        $this->_fullLocation = $this->_baseStorageLocation . '/' . $storageName 
-                               . $size . 'MB' . $type;
-        parent::__construct("create_storage", $connection);
+        $this->_baseStorageLocation = $baseStorageLocation;
+        
+        $this->_fullLocation = $this->getFullLocation(
+            $storageName,
+            $baseStorageLocation,
+            $size,
+            $type
+        );
+        
+        parent::__construct("CreateStorage", $connection);
+    }
+
+    /**
+     * Get full location based on arguments
+     *
+     * Storage location on server
+     *
+     * @param string $storageName         Storage name
+     * @param string $baseStorageLocation Storage name
+     * @param int    $size                Size
+     * @param string $type                Type
+     * 
+     * @return string
+     */
+    public function getFullLocation(
+        string $storageName,
+        string $baseStorageLocation,
+        int $size,
+        string $type
+    ) {
+        return $baseStorageLocation . DIRECTORY_SEPARATOR . $storageName 
+               . "_" . $size . "_" . 'MB' . "_" . $type;
     }
 
     /**
@@ -122,11 +150,11 @@ class CreateStorage extends Command
     {
         $this->storage = Storage::create(
             [
-                'name' => $this->storageName,
-                'location' => $this->fullLocation,
-                'type' => $this->type,
-                'size' => $this->size,
-                'active' => false,
+                'name'        => $this->_storageName,
+                'location'    => $this->_fullLocation,
+                'type'        => $this->_type,
+                'size'        => $this->_size,
+                'active'      => false,
                 'initialized' => false,
             ]
         );

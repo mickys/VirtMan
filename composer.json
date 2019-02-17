@@ -33,10 +33,13 @@
         }
     },
     "extra": {
-      "laravel": {
-          "providers": [
-              "VirtMan\\VirtManServiceProvider"
-          ]
-      }
-  }
+        "laravel": {
+            "providers": [
+                "VirtMan\\VirtManServiceProvider"
+            ]
+        }
+    },
+    "scripts": {
+        "phpcs": "phpcs --standard=PSR4"
+    }
 }

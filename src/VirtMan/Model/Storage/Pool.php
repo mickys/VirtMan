@@ -6,22 +6,21 @@
  *
  * @category VirtMan\Pool
  * @package  VirtMan
- * @author   Ryan Owens <RyanOwens@linux.com>
  * @author   Micky Socaci <micky@nowlive.ro>
  * @license  https://github.com/mickys/VirtMan/blob/master/LICENSE.md MIT
  * @link     https://github.com/mickys/VirtMan/
  */
-namespace VirtMan\Storage;
+namespace VirtMan\Model\Storage;
 
 use Illuminate\Database\Eloquent\Model;
-use VirtMan\Storage\Volume;
+
+// use VirtMan\Model\Storage\Volume;
 
 /**
  * Pool Model
  *
  * @category VirtMan\Pool
  * @package  VirtMan
- * @author   Ryan Owens <RyanOwens@linux.com>
  * @author   Micky Socaci <micky@nowlive.ro>
  * @license  https://github.com/mickys/VirtMan/blob/master/LICENSE.md MIT
  * @link     https://github.com/mickys/VirtMan/
