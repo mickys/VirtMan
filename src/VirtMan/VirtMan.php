@@ -16,10 +16,17 @@ namespace VirtMan;
 use VirtMan\Command\CreateMachine;
 use VirtMan\Command\CreateNetwork;
 use VirtMan\Command\CreateStorage;
+
+
 use VirtMan\Command\ListNetworks;
 use VirtMan\Command\ListMachines;
 use VirtMan\Command\ListNetworkCardModels;
-use VirtMan\Command\ListStoragePools;
+
+// Storage Pools
+use VirtMan\Command\Storage\Pool\ListStoragePools;
+use VirtMan\Command\Storage\Pool\RefreshStoragePool;
+use VirtMan\Command\Storage\Pool\GetStoragePoolInfo;
+use VirtMan\Command\Storage\Pool\GetStoragePoolResourceByName;
 
 // Exceptions
 use VirtMan\Exceptions\ImpossibleMemoryAllocationException;
@@ -379,6 +386,35 @@ class VirtMan
         return $command->run();
     }
 
+    /**
+     * Get Storage Pool Resource
+     *
+     * @param string $name 
+     * 
+     * @return array
+     */
+    public function getStoragePoolResourceByName($name)
+    {
+        $command = new GetStoragePoolResourceByName($this->_connection, $name);
+        return $command->run();
+    }
+
+    /**
+     * Get Storage Pool Info
+     *
+     * @param resource $pool 
+     * 
+     * @return array
+     */
+    public function getStoragePoolInfo($pool)
+    {
+        $command = new RefreshStoragePool($pool);
+        $command->run();
+
+        $command = new GetStoragePoolInfo($pool);
+        return $command->run();
+    }
+    
     /**
      * Get connection
      *

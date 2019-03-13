@@ -10,7 +10,7 @@
  * @license  https://github.com/mickys/VirtMan/blob/master/LICENSE.md MIT
  * @link     https://github.com/mickys/VirtMan/
  */
-namespace VirtMan\Command;
+namespace VirtMan\Command\Storage\Volume;
 
 use VirtMan\Command\Command;
 

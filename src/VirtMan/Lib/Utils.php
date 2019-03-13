@@ -259,4 +259,28 @@ class Utils
         return self::getNextIpAfter($ipAddress);        
     }
 
+
+    /**
+     * Convert GB to Bytes
+     *
+     * @param int $gb 
+     * 
+     * @return int
+     */
+    public static function convertGBToBytes(int $gb)
+    {
+        return $gb * 1024 * 1024 * 1024; 
+    }
+
+    /**
+     * Convert Bytes to GB
+     *
+     * @param int $bytes 
+     * 
+     * @return int
+     */
+    public static function convertBytesToGB(int $bytes)
+    {
+        return $bytes / 1024 / 1024 / 1024; 
+    }
 }

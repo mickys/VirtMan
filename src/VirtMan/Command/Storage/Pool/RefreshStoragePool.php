@@ -10,12 +10,12 @@
  * @license  https://github.com/mickys/VirtMan/blob/master/LICENSE.md MIT
  * @link     https://github.com/mickys/VirtMan/
  */
-namespace VirtMan\Command;
+namespace VirtMan\Command\Storage\Pool;
 
 use VirtMan\Command\Command;
 
 /**
- * ListStoragePools Command
+ * RefreshStoragePool Command
  *
  * @category VirtMan\Command
  * @package  VirtMan
@@ -23,7 +23,7 @@ use VirtMan\Command\Command;
  * @license  https://github.com/mickys/VirtMan/blob/master/LICENSE.md MIT
  * @link     https://github.com/mickys/VirtMan/
  */
-class ListStoragePools extends Command
+class RefreshStoragePool extends Command
 {
     /**
      * List Storage Pools Command
@@ -34,7 +34,7 @@ class ListStoragePools extends Command
      */
     public function __construct( $connection )
     {
-        parent::__construct("list_storage_pools", $connection);
+        parent::__construct("refresh_storage_pool", $connection);
     }
 
     /**
@@ -44,6 +44,6 @@ class ListStoragePools extends Command
      */
     public function run()
     {
-        return libvirt_list_storagepools($this->connection);
+        return libvirt_storagepool_refresh($this->connection);
     }
 }

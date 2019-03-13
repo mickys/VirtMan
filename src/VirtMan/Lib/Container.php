@@ -32,7 +32,11 @@ class Container
     public static function getNewContainerSettings()
     {
         $settings = array();
-        $settings["node_id"] = self::getNodeForNewContainer();
+
+        $nodeInfo = self::getNodeForNewContainer();
+        $settings["node_id"] = $nodeInfo["node_id"];
+        $settings["node_instance"] = $nodeInfo["node_instance"];
+        $settings["pool_resource"] = $nodeInfo["pool_resource"];
         $settings["mac_address"] = Utils::genMacAddress();
         $settings["ip_address"] = Utils::genNextAvailableContainerIpAddress();
 
@@ -46,55 +50,90 @@ class Container
      */
     public static function getNodeForNewContainer()
     {
-        $settings = array();
+        $results = array();
 
-        // check this node's 
+        // check this node's space
         $Node = \VirtMan\Model\Node\Node::orderBy('id', 'desc')->first();
 
-        if (self::nodeHasStoragePool($Node->id)) {
+        $nodeInstance = Utils::getVirtManInstanceByNodeId($Node->id);
 
-            $containerStorageSize = Utils::getConfig("container_storage_size_gb");
-            $spaceDetails = self::getNodeSpaceDetails($Node->id);
+        $results["node_instance"] = $nodeInstance;
 
-            // print_r($spaceDetails);
+        if (self::nodeHasStoragePool($nodeInstance)) {
+
+            $results["node_id"] = $Node->id;
+
+            $containerStorageSize = Utils::convertGBToBytes(
+                Utils::getConfig("container_storage_size_gb")
+            );
+
+            $spaceDetails = self::getNodeSpaceDetails($nodeInstance);
+
+            $spaceLeft = $spaceDetails["capacity_max"] - $containerStorageSize;
+            
+            // is there enough space left on the node ?
+            if (($spaceLeft) > 0 ) {
+
+                $results["pool_resource"] = $spaceDetails["pool_resource"];
+                
+            } else {
+                throw new \VirtMan\Exceptions\NoStorageSpaceException(
+                    "Not enough storage space on selected node."
+                );
+            }
 
         } else {
-            
+
             $poolName = Utils::getConfig("container_storage_pool_name");
             throw new \VirtMan\Exceptions\NoStoragePoolException(
                 $poolName." not found on selected node."
             );
+
         }
 
-        return $settings;
+        return $results;
     }
 
     /**
      * Get Node space details
      *
-     * @param int $nodeId 
+     * @param Virtman\Virtman $nodeInstance 
      * 
      * @return array
      */
-    public static function getNodeSpaceDetails(int $nodeId)
+    public static function getNodeSpaceDetails($nodeInstance)
     {
-        $nodeInstance = Utils::getVirtManInstanceByNodeId($nodeId);
-        $storagePools = $nodeInstance->listStoragePools();
+        $storagePoolResource = $nodeInstance->getStoragePoolResourceByName(
+            Utils::getConfig("container_storage_pool_name")
+        );
 
-        $poolName = Utils::getConfig("container_storage_pool_name");
+        $poolInfo = $nodeInstance->getStoragePoolInfo(
+            $storagePoolResource
+        );
+        $poolInfo["capacity_over_allocation_percentage"] = Utils::getConfig("node_storage_over_allocation_percentage");
 
+        $poolInfo["capacity_gb"] = Utils::convertBytesToGB($poolInfo["capacity"]);
+        $poolInfo["allocation_gb"] = Utils::convertBytesToGB($poolInfo["allocation"]);
+        $poolInfo["available_gb"] = Utils::convertBytesToGB($poolInfo["available"]);
+
+        $poolInfo["capacity_max"] = $poolInfo["capacity"] *
+            $poolInfo["capacity_over_allocation_percentage"];
+        $poolInfo["capacity_max_gb"] = Utils::convertBytesToGB($poolInfo["capacity_max"]);
+        
+        $poolInfo["pool_resource"] = $storagePoolResource;
+
+        return $poolInfo;
     }
     
     /**
      * Check if storage pool exists on node
      *
-     * @param int $nodeId 
+     * @param Virtman\Virtman $nodeInstance 
      * 
      * @return boolean
      */
-    public static function nodeHasStoragePool(int $nodeId)
+    public static function nodeHasStoragePool($nodeInstance)
     {
-        $nodeInstance = Utils::getVirtManInstanceByNodeId($nodeId);
         $storagePools = $nodeInstance->listStoragePools();
         $poolName = Utils::getConfig("container_storage_pool_name");
         return ( in_array($poolName, $storagePools));
