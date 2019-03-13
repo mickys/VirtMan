@@ -89,8 +89,8 @@ class CreateStorage extends Command
      *
      * @param string           $storageName         Storage name
      * @param string           $baseStorageLocation Storage name
-     * @param int              $size                Size
      * @param string           $type                Type
+     * @param int              $size                Size
      * @param Libvirt Resource $connection          Connection resource
      * 
      * @return None
@@ -98,8 +98,8 @@ class CreateStorage extends Command
     public function __construct(
         string $storageName,
         string $baseStorageLocation,
-        int $size,
         string $type,
+        int $size,
         $connection
     ) {
         $this->_storageName = $storageName;
@@ -114,7 +114,7 @@ class CreateStorage extends Command
             $type
         );
         
-        parent::__construct("CreateStorage", $connection);
+        parent::__construct("create_storage", $connection);
     }
 
     /**

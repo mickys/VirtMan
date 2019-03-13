@@ -18,6 +18,7 @@ use VirtMan\Command\CreateNetwork;
 use VirtMan\Command\CreateStorage;
 use VirtMan\Command\ListNetworks;
 use VirtMan\Command\ListMachines;
+use VirtMan\Command\ListNetworkCardModels;
 
 // Exceptions
 use VirtMan\Exceptions\ImpossibleMemoryAllocationException;
@@ -115,8 +116,8 @@ class VirtMan
         // Initialize Config Values
         // $this->_authname = config('virtman.username');
         // $this->_passphrase = config('virtman.password');
-        $this->_maxQuota = (int) config('virtman.storageQuota');
-        $this->_maxMemory = (int) config('virtman.memoryQuota');
+        // $this->_maxQuota = (int) config('virtman.storageQuota');
+        // $this->_maxMemory = (int) config('virtman.memoryQuota');
         
         // Attempt to connect to LibVirt
         $this->_connection = $this->_connect($remoteUrl);
@@ -234,10 +235,31 @@ class VirtMan
      * 
      * @return Network
      */
-    public function createNetwork(string $mac, string $network, string $model)
+    public function createNetwork(string $mac, string $network, string $model = "e1000")
     {
         $command = new CreateNetwork($mac, $network, $model, $this->_connection);
         return $command->run();
+    }
+
+    /**
+     * Generate new unused Mac address
+     *
+     * @param string $hypervisor_name Hypervisor name
+     *
+     * @return string
+     */
+    public function genMacAddress(string $hypervisor_name = "qemu")
+    {
+        $mac = \VirtMan\Lib\Utils::generateRandomMacAddress($hypervisor_name);
+        // check if it's unused
+        $usedMac = \VirtMan\Model\Network\Network::where(
+            ['mac' => $mac]
+        )->first();
+        
+        if (isset($usedMac->id)) {
+            $mac = $this->genMacAddress($hypervisor_name);
+        }
+        return $mac;
     }
 
     /**
@@ -245,14 +267,16 @@ class VirtMan
      *
      * Create a storage object
      *
-     * @param string $name Name
-     * @param string $type Type
-     * @param int    $size Size
+     * @param string $name                Name
+     * @param string $baseStorageLocation Storage name
+     * @param string $type                Type
+     * @param int    $size                Size
      * 
      * @return Storage
      */
-    public function createStorage(string $name, string $type, int $size)
+    public function createStorage(string $name, string $baseStorageLocation, string $type, int $size)
     {
+        /*
         if ($size < 0
             || $size > $this->_maxQuota
             || $size > $this->_remainingStorageSpace()
@@ -261,8 +285,9 @@ class VirtMan
                 "Attempting to create storage with an impossible size", 1
             );
         }
+        */
 
-        $command = new CreateStorage($name, $size, $type, $this->_connection);
+        $command = new CreateStorage($name, $baseStorageLocation, $type, $size, $this->_connection);
         return $command->run();
     }
 
@@ -288,9 +313,11 @@ class VirtMan
         int $numCpus,
         string $arch,
         array $storage,
-        Network $network
+        Network $network,
+        int $nodeId
     ) {
 
+        /*
         if ($memory < 0 
             || $memory > $this->_maxMemory 
             || $memory > $this->_remainingMemory()
@@ -299,13 +326,15 @@ class VirtMan
                 "Attempting to create a machine with an impossible memory size.", 1
             );
         }
-
+        
+        
         if (!in_array($arch, $this->_machineTypes)) {
             throw new InvalidArchitectureException(
                 "Attempting to create a machine with an unsupported Architecture",
                 1, null, $arch
             );
         }
+        */
 
         $command = new CreateMachine(
             $storage,
@@ -315,6 +344,7 @@ class VirtMan
             $memory,
             $numCpus,
             $network,
+            $nodeId,
             $this->_connection
         );
         return $command->run();
@@ -356,5 +386,16 @@ class VirtMan
             $command = new ListMachines($this->_connection, $filter);
         }
         return $command->run();
+    }
+
+
+    /**
+     * Get connection
+     *
+     * @return Libvirt connection resource
+     */
+    public function getConnection()
+    {
+        return $this->_connection;
     }
 }

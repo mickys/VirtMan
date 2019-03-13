@@ -52,7 +52,7 @@ class ListNetworks extends Command
         $connection,
         int $filter = VIR_NETWORKS_ALL
     ) {
-        parent::__construct("ListNetworks", $connection);
+        parent::__construct("list_networks", $connection);
         $this->_filter = $filter;
     }
 

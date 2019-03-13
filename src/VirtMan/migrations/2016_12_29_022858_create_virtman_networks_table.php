@@ -19,7 +19,7 @@ class CreateVirtmanNetworksTable extends Migration
         // Date created, last updated
         $table->timestamps();
         // MAC Address
-        $table->string('mac');
+        $table->string('mac')->unique();
         // libvirt 'Network' name
         $table->string('network');
         // NIC Model

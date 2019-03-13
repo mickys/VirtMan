@@ -15,7 +15,7 @@ namespace VirtMan\Command;
 use VirtMan\Command\Command;
 use VirtMan\Exceptions\InvalidMacException;
 use VirtMan\Exceptions\InvalidModelException;
-use VirtMan\Network\Network;
+use VirtMan\Model\Network\Network;
 
 /**
  * CreateNetwork Command
@@ -61,7 +61,13 @@ class CreateNetwork extends Command
      *
      * @var array string
      */
-    private $_availableModels = null;
+    private $_availableModels = array(
+        'e1000','e1000-82544gc', 'e1000-82545em','e1000e',
+        'i82550','i82551','i82557a','i82557b', 'i82557c',
+        'i82558a','i82558b','i82559a','i82559b','i82559c',
+        'i82559er','i82562','i82801','ne2k_pci','pcnet',
+        'rocker','rtl8139','virtio-net-pci','vmxnet3'
+    );
 
     /**
      * Create Network
@@ -82,15 +88,6 @@ class CreateNetwork extends Command
         $connection
     ) {
         parent::__construct("create_network", $connection);
-
-        // Get rid of trailing new line
-        if (config('virtman.connectionType') == "qemu") {
-            $nics = libvirt_connect_get_nic_models($connection);
-            $nics[count($nics) - 1] = substr_replace(
-                $nics[count($nics) - 1], "", -1, 1
-            );
-            $this->availableModels = $nics;
-        }
 
         if (!$this->_validateMac($mac)) {
             throw new InvalidMacException(
@@ -121,9 +118,9 @@ class CreateNetwork extends Command
     {
         $this->networkObject = Network::create(
             [
-                'mac' => $this->mac,
-                'network' => $this->network,
-                'model' => $this->model,
+                'mac' => $this->_mac,
+                'network' => $this->_network,
+                'model' => $this->_model,
             ]
         );
 
@@ -156,7 +153,6 @@ class CreateNetwork extends Command
      */
     private function _validateModel(string $model)
     {
-        $notUsingQemu = config('virtman.connectionType') != "qemu";
-        return $notUsingQemu || in_array($model, $this->availableModels);
+        return in_array($model, $this->_availableModels);
     }
 }

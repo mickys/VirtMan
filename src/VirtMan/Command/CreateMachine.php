@@ -16,9 +16,9 @@ use VirtMan\Command\Command;
 use VirtMan\Exceptions\NoNetworkException;
 use VirtMan\Exceptions\NoStorageException;
 use VirtMan\Exceptions\StorageAlreadyActiveException;
-use VirtMan\Machine\Machine;
-use VirtMan\Network\Network;
-use VirtMan\Storage\Storage;
+use VirtMan\Model\Machine\Machine;
+use VirtMan\Model\Network\Network;
+use VirtMan\Model\Storage\Storage;
 
 /**
  * CreateMachine Command
@@ -88,6 +88,13 @@ class CreateMachine extends Command
     private $_network = null;
 
     /**
+     * Node id hosting this machine
+     *
+     * @var nodeId
+     */
+    private $_nodeId = null;
+
+    /**
      * Libvirt resource from Machine creation
      *
      * @var Libvirt Resource
@@ -106,6 +113,7 @@ class CreateMachine extends Command
      * @param int                $memory     Number of MB
      * @param int                $cpus       Number of CPUS
      * @param Network            $network    Network
+     * @param int                $nodeId     Host Node Id
      * @param Libvirt Connection $connection Connection resource
      * 
      * @return None
@@ -118,6 +126,7 @@ class CreateMachine extends Command
         int $memory,
         int $cpus,
         Network $network,
+        int $nodeId,
         $connection
     ) {
 
@@ -141,6 +150,8 @@ class CreateMachine extends Command
         $this->_conn = $connection;
         $this->_storage = $storage;
         $this->_network = $network;
+        $this->_nodeId = $nodeId;
+
 
         $this->_type = ($type) ? $type : "nix";
         $this->_machineName = ($name) ? $name : _generateMachineName($this->_type);
@@ -163,6 +174,7 @@ class CreateMachine extends Command
                 'arch'       => $this->_arch,
                 'memory'     => $this->_memory,
                 'cpus'       => $this->_cpus,
+                'node_id'    => $this->_nodeId,
                 'started_at' => null,
                 'stopped_at' => null,
             ]
@@ -197,7 +209,7 @@ class CreateMachine extends Command
      */
     private function _createMachine()
     {
-        $iso = $this->_getIsoImage();
+        // $iso = $this->_getIsoImage();
         $disks = $this->_getDisks();
         $networkCard = $this->_getNetworkCard();
         return libvirt_domain_new(
@@ -236,7 +248,7 @@ class CreateMachine extends Command
     {
         $disks = [];
         for ($i = 1; $i < count($this->_storage); $i++) {
-            $s = $this->_storage[i];
+            $s = $this->_storage[$i];
             if ($s->active) {
                 throw new StorageAlreadyActiveException(
                     "Attempting to reactivate a storage volume.", 1, null, $s->id
@@ -244,7 +256,7 @@ class CreateMachine extends Command
             }
 
             if (!$s->initialized) {
-                $s->initialize($this->conn);
+                $s->initialize($this->_conn);
             }
 
             array_push(
