@@ -19,6 +19,7 @@ use VirtMan\Command\CreateStorage;
 use VirtMan\Command\ListNetworks;
 use VirtMan\Command\ListMachines;
 use VirtMan\Command\ListNetworkCardModels;
+use VirtMan\Command\ListStoragePools;
 
 // Exceptions
 use VirtMan\Exceptions\ImpossibleMemoryAllocationException;
@@ -47,7 +48,7 @@ class VirtMan
      *
      * @var string
      */
-    const VERSION = '0.0.2';
+    const VERSION = '0.1.0';
 
     /**
      * Libvirt Domain Connection
@@ -242,27 +243,6 @@ class VirtMan
     }
 
     /**
-     * Generate new unused Mac address
-     *
-     * @param string $hypervisor_name Hypervisor name
-     *
-     * @return string
-     */
-    public function genMacAddress(string $hypervisor_name = "qemu")
-    {
-        $mac = \VirtMan\Lib\Utils::generateRandomMacAddress($hypervisor_name);
-        // check if it's unused
-        $usedMac = \VirtMan\Model\Network\Network::where(
-            ['mac' => $mac]
-        )->first();
-        
-        if (isset($usedMac->id)) {
-            $mac = $this->genMacAddress($hypervisor_name);
-        }
-        return $mac;
-    }
-
-    /**
      * Create Storage
      *
      * Create a storage object
@@ -388,6 +368,16 @@ class VirtMan
         return $command->run();
     }
 
+    /**
+     * List Storage Pools
+     *
+     * @return array
+     */
+    public function listStoragePools()
+    {
+        $command = new ListStoragePools($this->_connection);
+        return $command->run();
+    }
 
     /**
      * Get connection

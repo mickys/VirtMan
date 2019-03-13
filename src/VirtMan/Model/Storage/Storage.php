@@ -118,4 +118,5 @@ class Storage extends Model
         }
         return $hostname !== false;
     }
+    
 }

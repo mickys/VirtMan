@@ -15,7 +15,7 @@ namespace VirtMan\Command;
 use VirtMan\Command\Command;
 
 /**
- * ListStorage Command
+ * RefreshStoragePool Command
  *
  * @category VirtMan\Command
  * @package  VirtMan
@@ -23,7 +23,27 @@ use VirtMan\Command\Command;
  * @license  https://github.com/mickys/VirtMan/blob/master/LICENSE.md MIT
  * @link     https://github.com/mickys/VirtMan/
  */
-class ListStorage extends Command
+class RefreshStoragePool extends Command
 {
-    
+    /**
+     * List Storage Pools Command
+     *
+     * @param Libvirt Connection $connection Connection resource
+     * 
+     * @return None
+     */
+    public function __construct( $connection )
+    {
+        parent::__construct("refresh_storage_pool", $connection);
+    }
+
+    /**
+     * Run the command.
+     *
+     * @return array
+     */
+    public function run()
+    {
+        return libvirt_storagepool_refresh($this->connection);
+    }
 }

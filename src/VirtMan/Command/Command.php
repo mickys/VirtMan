@@ -42,23 +42,23 @@ abstract class Command
      *
      * Command constructor.
      *
-     * @param string           $name       Command name
-     * @param Libvirt Resource $connection Connection resource
+     * @param string           $name                 Command name
+     * @param Libvirt Resource $connectionOrResource Connection resource
      * 
      * @return None
      */
-    protected function __construct(string $name, $connection)
+    protected function __construct(string $name, $connectionOrResource)
     {
         $this->name = $name;
         
-        if (!$connection) {
+        if (!$connectionOrResource) {
             throw new NoLibvirtConnectionException(
                 "Attempting to create a " . $this->name . " " .
-                "command without a Libvirt connection.", 1
+                "command without a Libvirt connection or resource.", 1
             );
         }
 
-        $this->connection = $connection;
+        $this->connection = $connectionOrResource;
     }
 
     /**
