@@ -28,6 +28,18 @@ use VirtMan\Command\Storage\Pool\RefreshStoragePool;
 use VirtMan\Command\Storage\Pool\GetStoragePoolInfo;
 use VirtMan\Command\Storage\Pool\GetStoragePoolResourceByName;
 
+// Storage Volumes
+use VirtMan\Command\Storage\Volume\CloneStorage;
+use VirtMan\Command\Storage\Volume\CreateXML as StorageVolumeCreateXML;
+
+// Network
+use VirtMan\Command\Network\GetNetworkXML;
+
+// Domain
+use VirtMan\Command\Domain\DefineXML as DomainDefineXML;
+use VirtMan\Command\Domain\Lookup as DomainLookup;
+use VirtMan\Command\Domain\Create as DomainCreate;
+
 // Exceptions
 use VirtMan\Exceptions\ImpossibleMemoryAllocationException;
 use VirtMan\Exceptions\ImpossibleStorageAllocationException;
@@ -243,8 +255,11 @@ class VirtMan
      * 
      * @return Network
      */
-    public function createNetwork(string $mac, string $network, string $model = "e1000")
-    {
+    public function createNetwork(
+        string $mac, 
+        string $network, 
+        string $model = "e1000"
+    ) {
         $command = new CreateNetwork($mac, $network, $model, $this->_connection);
         return $command->run();
     }
@@ -261,8 +276,12 @@ class VirtMan
      * 
      * @return Storage
      */
-    public function createStorage(string $name, string $baseStorageLocation, string $type, int $size)
-    {
+    public function createStorage(
+        string $name, 
+        string $baseStorageLocation, 
+        string $type, 
+        int $size
+    ) {
         /*
         if ($size < 0
             || $size > $this->_maxQuota
@@ -274,7 +293,9 @@ class VirtMan
         }
         */
 
-        $command = new CreateStorage($name, $baseStorageLocation, $type, $size, $this->_connection);
+        $command = new CreateStorage(
+            $name, $baseStorageLocation, $type, $size, $this->_connection
+        );
         return $command->run();
     }
 
@@ -290,7 +311,8 @@ class VirtMan
      * @param string        $arch    Machine architecture
      * @param Storage array $storage Machine storage array
      * @param Network       $network Machine network object
-     *
+     * @param int           $nodeId  Node ID
+     * 
      * @return Machine
      */
     public function createMachine(
@@ -414,6 +436,87 @@ class VirtMan
         $command = new GetStoragePoolInfo($pool);
         return $command->run();
     }
+    
+    /**
+     * Clone Storage Volume
+     *
+     * @param string $xml 
+     * 
+     * @return array
+     */
+    public function cloneStorageVolume($xml)
+    {
+        $command = new CloneStorage($this->_connection, $name);
+        return $command->run();
+    }
+
+    /**
+     * Create Storage Volume defined in XML
+     *
+     * @param VirtMan\Command\Domain\Lookup\resource $poolResource 
+     * @param string                                 $xml 
+     * 
+     * @return string
+     */
+    public function createStorageVolume($poolResource, $xml)
+    {
+        $command = new StorageVolumeCreateXML($poolResource, $xml);
+        return $command->run();
+    }
+
+    /**
+     * Get Network XML
+     *
+     * @param string $name 
+     * 
+     * @return string
+     */
+    public function getNetworkXML($name = "default")
+    {
+        $command = new GetNetworkXML($this->_connection, $name);
+        return $command->run();
+    }
+    
+    /**
+     * Define new domain xml
+     *
+     * @param string $xml 
+     * 
+     * @return string
+     */
+    public function domainDefineXML($xml)
+    {
+        $command = new DomainDefineXML($this->_connection, $xml);
+        return $command->run();
+    }
+    
+    /**
+     * Lookup domain by name
+     *
+     * @param string $name 
+     * 
+     * @return string
+     */
+    public function domainLookup($name)
+    {
+        $command = new DomainLookup($this->_connection, $name);
+        return $command->run();
+    }
+
+    /**
+     * Create new domain using specified domain resource
+     *
+     * @param VirtMan\Command\Domain\Lookup\resource $domain 
+     * 
+     * @return string
+     */
+    public function domainCreate($domain)
+    {
+        $command = new DomainCreate($domain);
+        return $command->run();
+    }
+    
+
     
     /**
      * Get connection

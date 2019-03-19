@@ -25,52 +25,6 @@ class Utils
 {
 
     /**
-     * Generate new unused Mac address
-     *
-     * @param string $hypervisor_name Hypervisor name
-     * @param int    $seed            uintSeed
-     * 
-     * @return string
-     */
-    public static function generateRandomMacAddress(string $hypervisor_name, $seed=false)
-    {
-        if (!$seed) {
-            $seed = 1;
-        }
-
-        if ($hypervisor_name == 'qemu') {
-            $prefix = '52:54:00';
-        } else {
-            if ($hypervisor_name == 'xen') {
-                $prefix = '00:16:3e';
-            } else {
-                $prefix = self::macbyte(($seed * rand()) % 256).':'.
-                    self::macbyte(($seed * rand()) % 256).':'.
-                    self::macbyte(($seed * rand()) % 256);
-            }
-        }
-        return $prefix.':'.
-            self::macbyte(($seed * rand()) % 256).':'.
-            self::macbyte(($seed * rand()) % 256).':'.
-            self::macbyte(($seed * rand()) % 256);
-    }
-
-    /**
-     * Generate new unused Mac address
-     *
-     * @param int $val Value
-     *
-     * @return int
-     */
-    public static function macbyte(int $val)
-    {
-        if ($val < 16) {
-            return '0'.dechex($val);
-        }
-        return dechex($val);
-    }
-
-    /**
      * Get configuration key values
      *
      * @param string $key Key
@@ -110,7 +64,7 @@ class Utils
         if (isset($config->name) && $config->name === $key) {
             // update
             \VirtMan\Model\Config\Config::where("name", $key)
-                ->update(['value' => \DB::raw( $value )]);
+                ->update(['value' => \DB::raw($value)]);
 
         } else {
             // create
@@ -125,7 +79,10 @@ class Utils
      */
     public static function canRunJobFromQHostQueue()
     {
-        return ( self::getConfig("can_run_job_from_host_queue") === "1" || self::getConfig("can_run_job_from_host_queue") === null );
+        return ( 
+            self::getConfig("can_run_job_from_host_queue") === "1" 
+            || self::getConfig("can_run_job_from_host_queue") === null 
+        );
     }
     
     /**
@@ -148,7 +105,6 @@ class Utils
         return self::setConfig("can_run_job_from_host_queue", "0");
     }
 
-
     /**
      * Get Node Instance
      * 
@@ -165,7 +121,6 @@ class Utils
             )->first()->url
         );
     }
-    
 
     /**
      * Get DHCP Node Instance
@@ -176,89 +131,6 @@ class Utils
     {
         return self::getVirtManInstanceByNodeId(self::getConfig("dhcp_node_id"));
     }
-
-
-    /**
-     * Generate new unused Mac address
-     *
-     * @param string $hypervisor_name Hypervisor name
-     *
-     * @return string
-     */
-    public static function genMacAddress(string $hypervisor_name = "qemu")
-    {
-        $mac = self::generateRandomMacAddress($hypervisor_name);
-        // check if it's unused
-        $usedMac = \VirtMan\Model\Network\Network::where(
-            ['mac' => $mac]
-        )->first();
-        
-        if (isset($usedMac->id)) {
-            $mac = self::genMacAddress($hypervisor_name);
-        }
-        return $mac;
-    }
-
-    /**
-     * Generate the next ip Address 
-     *
-     * @param string $ip 
-     * 
-     * @return string
-     */
-    public static function getNextIpAfter(string $ip)
-    {
-        $long = ip2long($ip);
-        $result = long2ip(++$long);
-        if (!self::validaUsableIpv4Address($result)) {
-            return self::getNextIpAfter($result);
-        }
-        return $result;
-    }
-
-    /**
-     * Generate the next ip Address 
-     *
-     * @param string $ip 
-     * 
-     * @return string
-     */
-    public static function validaUsableIpv4Address(string $ip)
-    {
-        $str = explode(".", $ip);
-        if (count($str) === 4) {
-            if ($str[3] > 0 && $str[3] < 255) {
-                return true;
-            }
-        } 
-        return false;
-    }
-
-    /**
-     * Generate the next container's ip Address
-     *
-     * @return array
-     */
-    public static function genNextAvailableContainerIpAddress()
-    {
-        $ipAddress = "";
-        
-        // see if we have containers, and if we do use the last one's ip
-        $lastMachine = \VirtMan\Model\Machine\Machine::orderBy('id', 'desc')
-            ->first();
-
-        if (isset($lastMachine->ip)) {
-            $ipAddress = $lastMachine->ip;
-
-        } else {
-
-            // else use the config start 
-            $ipAddress = self::getConfig("container_ip_start");
-        }
-
-        return self::getNextIpAfter($ipAddress);        
-    }
-
 
     /**
      * Convert GB to Bytes
