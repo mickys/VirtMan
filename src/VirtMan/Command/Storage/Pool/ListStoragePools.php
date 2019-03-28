@@ -34,7 +34,7 @@ class ListStoragePools extends Command
      */
     public function __construct( $connection )
     {
-        parent::__construct("list_storage_pools", $connection);
+        parent::__construct("ListStoragePools", $connection);
     }
 
     /**

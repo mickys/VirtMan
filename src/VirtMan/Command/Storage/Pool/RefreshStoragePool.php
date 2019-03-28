@@ -34,7 +34,7 @@ class RefreshStoragePool extends Command
      */
     public function __construct( $connection )
     {
-        parent::__construct("refresh_storage_pool", $connection);
+        parent::__construct("RefreshStoragePool", $connection);
     }
 
     /**

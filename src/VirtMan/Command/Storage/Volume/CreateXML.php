@@ -35,7 +35,7 @@ class CreateXML extends Command
      */
     public function __construct( $resource, $xml )
     {
-        parent::__construct("domain_create", $resource);
+        parent::__construct("DomainCreate", $resource);
         $this->xml = $xml;
     }
 

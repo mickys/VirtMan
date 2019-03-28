@@ -33,10 +33,13 @@ class Network
         $XML = '<network>'."\n";
         $XML.= '    <name>default</name>'."\n";
         $XML.= '    <uuid>a522aa01-9846-497e-85b6-0407efb95693</uuid>'."\n";
-        $XML.= '    <forward mode="nat">'."\n";
-        $XML.= '        <nat>'."\n";
-        $XML.= '            <port start="1024" end="65535"/>'."\n";
-        $XML.= '        </nat>'."\n";
+        // $XML.= '    <forward mode="nat">'."\n";
+        // $XML.= '        <nat>'."\n";
+        // $XML.= '            <port start="1024" end="65535"/>'."\n";
+        // $XML.= '        </nat>'."\n";
+        // $XML.= '    </forward>'."\n";
+        $XML.= '    <forward mode="route" dev="eth0" />'."\n";
+        $XML.= '        <interface dev="eth0" />'."\n";
         $XML.= '    </forward>'."\n";
         $XML.= '    <bridge name="virbr0" stp="on" delay="0"/>'."\n";
         $XML.= '    <mac address="52:54:00:61:a8:8f"/>'."\n";

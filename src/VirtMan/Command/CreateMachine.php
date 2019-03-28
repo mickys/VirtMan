@@ -142,7 +142,7 @@ class CreateMachine extends Command
             );
         }
 
-        parent::__construct("create_machine", $connection);
+        parent::__construct("CreateMachine", $connection);
 
         $this->_arch = $arch;
         $this->_memory = $memory;

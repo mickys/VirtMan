@@ -114,7 +114,7 @@ class CreateStorage extends Command
             $type
         );
         
-        parent::__construct("create_storage", $connection);
+        parent::__construct("CreateStorage", $connection);
     }
 
     /**

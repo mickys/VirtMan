@@ -34,7 +34,7 @@ class GetStoragePoolInfo extends Command
      */
     public function __construct( $connection )
     {
-        parent::__construct("get_storage_pool_info", $connection);
+        parent::__construct("GetStoragePoolInfo", $connection);
     }
 
     /**

@@ -35,7 +35,7 @@ class DefineXML extends Command
      */
     public function __construct( $connection, $xml )
     {
-        parent::__construct("domain_define_xml", $connection);
+        parent::__construct("DomainDefineXML", $connection);
         $this->xml = $xml;
 
     }

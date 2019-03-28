@@ -35,7 +35,7 @@ class Lookup extends Command
      */
     public function __construct( $connection, $name )
     {
-        parent::__construct("domain_lookup", $connection);
+        parent::__construct("DomainLookup", $connection);
         $this->name = $name;
 
     }

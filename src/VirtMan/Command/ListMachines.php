@@ -57,7 +57,7 @@ class ListMachines extends Command
         $connection,
         int $filter = 1
     ) {
-        parent::__construct("list_machines", $connection);
+        parent::__construct("ListMachines", $connection);
         $this->_filter = $filter;
     }
 

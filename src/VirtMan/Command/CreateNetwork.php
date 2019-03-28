@@ -87,7 +87,7 @@ class CreateNetwork extends Command
         string $model,
         $connection
     ) {
-        parent::__construct("create_network", $connection);
+        parent::__construct("CreateNetwork", $connection);
 
         if (!$this->_validateMac($mac)) {
             throw new InvalidMacException(

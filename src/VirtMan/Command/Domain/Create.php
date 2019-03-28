@@ -34,7 +34,7 @@ class Create extends Command
      */
     public function __construct( $domain )
     {
-        parent::__construct("domain_create", $domain);
+        parent::__construct("DomainCreate", $domain);
     }
 
     /**

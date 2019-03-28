@@ -35,7 +35,7 @@ class GetNetworkXML extends Command
      */
     public function __construct( $connection, $name = "default" )
     {
-        parent::__construct("get_network_xml", $connection);
+        parent::__construct("GetNetworkXML", $connection);
         $this->name = $name;
 
     }

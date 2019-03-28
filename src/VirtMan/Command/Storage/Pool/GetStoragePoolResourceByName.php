@@ -35,7 +35,7 @@ class GetStoragePoolResourceByName extends Command
      */
     public function __construct( $resource, $name )
     {
-        parent::__construct("get_storage_pool_info", $resource);
+        parent::__construct("GetStoragePoolResourceByName", $resource);
         $this->name = $name;
     }
 
