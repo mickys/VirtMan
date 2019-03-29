@@ -54,6 +54,6 @@ class DhcpItem extends Model
      */
     public function parent()
     {
-        return $this->hasOne('VirtMan\Model\Machine\Machine');
+        return $this->belongsTo('VirtMan\Model\Machine\Machine');
     }
 }

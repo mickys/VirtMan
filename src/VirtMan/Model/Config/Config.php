@@ -34,6 +34,9 @@ class Config extends Model
 
     public $timestamps = false; 
     
+    public $primaryKey = 'name';
+    public $incrementing = false;
+
     /**
      * Array specifying which columns can be mass assignable
      *

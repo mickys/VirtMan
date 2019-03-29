@@ -81,7 +81,6 @@ class Utils
     {
         return ( 
             self::getConfig("can_run_job_from_host_queue") === "1" 
-            || self::getConfig("can_run_job_from_host_queue") === "" 
         );
     }
     
