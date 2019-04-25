@@ -15,7 +15,7 @@ namespace VirtMan\Command\Storage\Volume;
 use VirtMan\Command\Command;
 
 /**
- * Create Command
+ * GetByName Command
  *
  * @category VirtMan\Command
  * @package  VirtMan
@@ -23,20 +23,21 @@ use VirtMan\Command\Command;
  * @license  https://github.com/mickys/VirtMan/blob/master/LICENSE.md MIT
  * @link     https://github.com/mickys/VirtMan/
  */
-class CreateXML extends Command
+class GetByName extends Command
 {
     /**
-     * Create Command
+     * GetByName Command
      *
-     * @param Libvirt Connection $resource 
-     * @param string             $xml 
+     * @param Libvirt StoragePool $resource 
+     * @param string              $name 
      * 
      * @return None
      */
-    public function __construct( $resource, $xml )
+    public function __construct( $resource, $name )
     {
-        parent::__construct("StorageVolumeCreateXML", $resource);
-        $this->xml = $xml;
+        parent::__construct("StorageVolumeGetByName", $resource);
+        $this->resource = $resource;
+        $this->name = $name;
     }
 
     /**
@@ -46,7 +47,7 @@ class CreateXML extends Command
      */
     public function run()
     {
-        // resource / xml
-        return libvirt_storagevolume_create_xml($this->connection, $this->xml);
+        // resource / name
+        return libvirt_storagevolume_lookup_by_name($this->resource, $this->name);
     }
 }

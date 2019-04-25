@@ -10,12 +10,12 @@
  * @license  https://github.com/mickys/VirtMan/blob/master/LICENSE.md MIT
  * @link     https://github.com/mickys/VirtMan/
  */
-namespace VirtMan\Command\Storage\Volume;
+namespace VirtMan\Command\Domain;
 
 use VirtMan\Command\Command;
 
 /**
- * Create Command
+ * IsActive Command
  *
  * @category VirtMan\Command
  * @package  VirtMan
@@ -23,20 +23,20 @@ use VirtMan\Command\Command;
  * @license  https://github.com/mickys/VirtMan/blob/master/LICENSE.md MIT
  * @link     https://github.com/mickys/VirtMan/
  */
-class CreateXML extends Command
+class IsActive extends Command
 {
     /**
-     * Create Command
+     * IsActive Command
      *
-     * @param Libvirt Connection $resource 
-     * @param string             $xml 
+     * @param Libvirt Domain Resource $resource 
      * 
      * @return None
      */
-    public function __construct( $resource, $xml )
+    public function __construct( $resource )
     {
-        parent::__construct("StorageVolumeCreateXML", $resource);
-        $this->xml = $xml;
+        parent::__construct("DomainIsActive", $resource);
+        $this->resource = $resource;
+
     }
 
     /**
@@ -46,7 +46,6 @@ class CreateXML extends Command
      */
     public function run()
     {
-        // resource / xml
-        return libvirt_storagevolume_create_xml($this->connection, $this->xml);
+        return libvirt_domain_is_active($this->resource);
     }
 }

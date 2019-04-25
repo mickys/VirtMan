@@ -31,6 +31,9 @@ use VirtMan\Command\Storage\Pool\GetStoragePoolResourceByName;
 // Storage Volumes
 use VirtMan\Command\Storage\Volume\CloneStorage;
 use VirtMan\Command\Storage\Volume\CreateXML as StorageVolumeCreateXML;
+use VirtMan\Command\Storage\Volume\GetByName as StorageVolumeGetByName;
+use VirtMan\Command\Storage\Volume\Delete as StorageVolumeDelete;
+
 
 // Network
 use VirtMan\Command\Network\GetNetworkXML;
@@ -39,6 +42,9 @@ use VirtMan\Command\Network\GetNetworkXML;
 use VirtMan\Command\Domain\DefineXML as DomainDefineXML;
 use VirtMan\Command\Domain\Lookup as DomainLookup;
 use VirtMan\Command\Domain\Create as DomainCreate;
+use VirtMan\Command\Domain\Destroy as DomainDestroy;
+use VirtMan\Command\Domain\Undefine as DomainUndefine;
+use VirtMan\Command\Domain\IsActive as DomainIsActive;
 
 // Exceptions
 use VirtMan\Exceptions\ImpossibleMemoryAllocationException;
@@ -438,6 +444,20 @@ class VirtMan
     }
     
     /**
+     * Refresh Storage Pool
+     *
+     * @param resource $pool 
+     * 
+     * @return array
+     */
+    public function refreshStoragePool($pool)
+    {
+        $command = new RefreshStoragePool($pool);
+        return $command->run();
+    }
+    
+
+    /**
      * Clone Storage Volume
      *
      * @param string $xml 
@@ -504,6 +524,19 @@ class VirtMan
     }
 
     /**
+     * Is domain active
+     *
+     * @param resource $resource 
+     * 
+     * @return string
+     */
+    public function domainIsActive($resource)
+    {
+        $command = new DomainIsActive($resource);
+        return $command->run();
+    }
+
+    /**
      * Create new domain using specified domain resource
      *
      * @param VirtMan\Command\Domain\Lookup\resource $domain 
@@ -515,8 +548,59 @@ class VirtMan
         $command = new DomainCreate($domain);
         return $command->run();
     }
-    
 
+    /**
+     * Destroy the specified domain resource
+     *
+     * @param VirtMan\Command\Domain\Lookup\resource $domain 
+     * 
+     * @return string
+     */
+    public function domainDestroy($domain)
+    {
+        $command = new DomainDestroy($domain);
+        return $command->run();
+    }
+    
+    /**
+     * Undefine the specified domain resource
+     *
+     * @param VirtMan\Command\Domain\Lookup\resource $domain 
+     * 
+     * @return string
+     */
+    public function domainUndefine($domain)
+    {
+        $command = new DomainUndefine($domain);
+        return $command->run();
+    }    
+
+    /**
+     * Get storage volume by name
+     *
+     * @param resource $pool 
+     * @param string   $name 
+     * 
+     * @return string
+     */
+    public function storageVolumeGetByName($pool, $name)
+    {
+        $command = new StorageVolumeGetByName($pool, $name);
+        return $command->run();
+    }
+    
+    /**
+     * Delete storage volume
+     *
+     * @param resource $resource 
+     * 
+     * @return string
+     */
+    public function storageVolumeDelete($resource)
+    {
+        $command = new StorageVolumeDelete($resource);
+        return $command->run();
+    }
     
     /**
      * Get connection
