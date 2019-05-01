@@ -63,6 +63,7 @@ class Machine extends Model
         'cpus',
         'ip',
         'node_id',
+        'address',
         'started_at',
         'stopped_at'
     ];
