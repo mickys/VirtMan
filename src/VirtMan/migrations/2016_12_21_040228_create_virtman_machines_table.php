@@ -15,7 +15,6 @@ class CreateVirtmanMachinesTable extends Migration
     {
         Schema::create('virtman_machines', function(Blueprint $table){
           $table->increments('id');
-          $table->timestamps();
           $table->string('name');
           $table->string('type');
           $table->string('arch')->default('x86_64');
@@ -24,9 +23,10 @@ class CreateVirtmanMachinesTable extends Migration
           $table->string('status')->default('installing');
           $table->string('ip');
           $table->unsignedInteger('node_id');
+          $table->string('address');
           $table->date('started_at');
           $table->date('stopped_at');
-
+          $table->timestamps();
         });
     }
 
