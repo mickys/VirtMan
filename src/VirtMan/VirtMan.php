@@ -45,6 +45,7 @@ use VirtMan\Command\Domain\Create as DomainCreate;
 use VirtMan\Command\Domain\Destroy as DomainDestroy;
 use VirtMan\Command\Domain\Undefine as DomainUndefine;
 use VirtMan\Command\Domain\IsActive as DomainIsActive;
+use VirtMan\Command\Domain\DefineXML as DomainGetXML;
 
 // Exceptions
 use VirtMan\Exceptions\ImpossibleMemoryAllocationException;
@@ -522,6 +523,20 @@ class VirtMan
         $command = new DomainLookup($this->_connection, $name);
         return $command->run();
     }
+
+    /**
+     * Get domain xml by res
+     *
+     * @param string $name 
+     * 
+     * @return string
+     */
+    public function domainGetXML($resource)
+    {
+        $command = new DomainGetXML($resource);
+        return $command->run();
+    }
+    
 
     /**
      * Is domain active
