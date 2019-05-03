@@ -64,6 +64,7 @@ class Machine extends Model
         'ip',
         'node_id',
         'address',
+        'package',
         'started_at',
         'stopped_at'
     ];

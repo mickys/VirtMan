@@ -24,6 +24,7 @@ class CreateVirtmanMachinesTable extends Migration
           $table->string('ip');
           $table->unsignedInteger('node_id');
           $table->string('address')->nullable();
+          $table->string('package')->nullable();
           $table->date('started_at');
           $table->date('stopped_at');
           $table->timestamps();
