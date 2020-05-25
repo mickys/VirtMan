@@ -34,6 +34,20 @@ class Node extends Model
      * date sync_at
      * date created_at
      * date updated_at
+     * 
+     * string type
+     * int resource_vcpus
+     * int resource_memory
+     * int resource_storage
+     * string interface_0_name
+     * string interface_0_mac
+     * string interface_0_ip
+     * string interface_1_name
+     * string interface_1_mac
+     * string interface_1_ip
+     * string interface_1_netmask
+     * string interface_1_dhcp_start
+     * string interface_1_dhcp_end
      */
 
     /**
@@ -54,6 +68,20 @@ class Node extends Model
         'status',
         'sync_at',
         'created_at',
+        //
+        'type',
+        'resource_vcpus',
+        'resource_memory',
+        'resource_storage',
+        'interface_0_name',
+        'interface_0_mac',
+        'interface_0_ip',
+        'interface_1_name',
+        'interface_1_mac',
+        'interface_1_ip',
+        'interface_1_netmask',
+        'interface_1_dhcp_start',
+        'interface_1_dhcp_end',
     ];
 
     /**

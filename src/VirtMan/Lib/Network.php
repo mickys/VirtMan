@@ -32,15 +32,32 @@ class Network
     {
         $XML = '<network>'."\n";
         $XML.= '    <name>default</name>'."\n";
+        
+        // set uuid blank
+        
         $XML.= '    <uuid>a522aa01-9846-497e-85b6-0407efb95693</uuid>'."\n";
         // $XML.= '    <forward mode="nat">'."\n";
         // $XML.= '        <nat>'."\n";
         // $XML.= '            <port start="1024" end="65535"/>'."\n";
         // $XML.= '        </nat>'."\n";
         // $XML.= '    </forward>'."\n";
+
+        // update to $node->interface_0_name
+
         $XML.= '    <forward mode="route" dev="eth0" />'."\n";
         $XML.= '        <interface dev="eth0" />'."\n";
         $XML.= '    </forward>'."\n";
+
+        // generate a mac address for the virbr0 interface
+        // self::generateRandomMacAddress();
+        // update to
+        // $node->interface_1_name
+        // $node->interface_1_mac
+        // $node->interface_1_ip
+        // $node->interface_1_netmask
+        // $node->interface_1_dhcp_start
+        // $node->interface_1_dhcp_end
+
         $XML.= '    <bridge name="virbr0" stp="on" delay="0"/>'."\n";
         $XML.= '    <mac address="52:54:00:61:a8:8f"/>'."\n";
         $XML.= '    <ip address="192.168.122.1" netmask="255.255.255.0" localPtr="yes">'."\n";
@@ -50,6 +67,7 @@ class Network
         $items = \VirtMan\Model\Network\DhcpItem::all();
         $i = 0;
         foreach ($items as $item) {
+            // update to item id instead of $i
             $XML.= '            <host mac="'.$item->mac.'" name="Container_'.++$i.'" ip="'.$item->ip.'"/>'."\n";
         }
         $XML.= '        </dhcp>'."\n";

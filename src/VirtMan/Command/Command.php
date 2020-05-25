@@ -12,6 +12,7 @@
  */
 namespace VirtMan\Command;
 
+use VirtMan\Exceptions\NoLibvirtConnectionException;
 /**
  * Abstract Command
  *

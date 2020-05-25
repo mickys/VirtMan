@@ -42,7 +42,9 @@ class DhcpItem extends Model
         'ip',
         'mac',
         'name',
-        'parent'
+        'parent',
+        //
+        'node',
     ];
 
     public $timestamps = false; 
