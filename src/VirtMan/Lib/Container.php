@@ -98,8 +98,13 @@ class Container
 
             $results["node_id"] = $Node->id;
 
-            $containerStorageSize = Utils::convertGBToBytes(
-                Utils::getConfig("container_storage_size_gb")
+            $containerStorageSize = 0;
+            $containerStorageSize+= Utils::convertGBToBytes(
+                Utils::getConfig("container_storage_root_size_gb")
+            );
+
+            $containerStorageSize+= Utils::convertGBToBytes(
+                Utils::getConfig("container_storage_user_size_gb")
             );
 
             $spaceDetails = self::getNodeSpaceDetails($nodeInstance);
