@@ -27,6 +27,13 @@ use VirtMan\Command\Storage\Pool\ListStoragePools;
 use VirtMan\Command\Storage\Pool\RefreshStoragePool;
 use VirtMan\Command\Storage\Pool\GetStoragePoolInfo;
 use VirtMan\Command\Storage\Pool\GetStoragePoolResourceByName;
+use VirtMan\Command\Storage\Pool\DefineXML as StoragePoolDefineXML;
+use VirtMan\Command\Storage\Pool\Create as StoragePoolCreate;
+use VirtMan\Command\Storage\Pool\Destroy as StoragePoolDestroy;
+use VirtMan\Command\Storage\Pool\GetActive as StoragePoolGetActive;
+use VirtMan\Command\Storage\Pool\GetAutostart as StoragePoolGetAutostart;
+use VirtMan\Command\Storage\Pool\SetAutostart as StoragePoolSetAutostart;
+
 
 // Storage Volumes
 use VirtMan\Command\Storage\Volume\CloneStorage;
@@ -489,6 +496,85 @@ class VirtMan
     public function createStorageVolume($poolResource, $xml)
     {
         $command = new StorageVolumeCreateXML($poolResource, $xml);
+        return $command->run();
+    }
+
+    /**
+     * Define a storage Pool
+     *
+     * @param string $xml 
+     * 
+     * @return resource
+     */
+    public function storagePoolDefineXML($xml)
+    {
+        $command = new StoragePoolDefineXML($this->_connection, $xml);
+        return $command->run();
+    }
+    
+    /**
+     * Create a defined storage Pool
+     *
+     * @param string $xml 
+     * 
+     * @return string
+     */
+    public function storagePoolCreate($resource)
+    {
+        $command = new StoragePoolCreate($resource);
+        return $command->run();
+    }
+
+    /**
+     * Destroy a defined storage Pool
+     *
+     * @param resource $resource 
+     * 
+     * @return string
+     */
+    public function storagePoolDestroy($resource)
+    {
+        $command = new StoragePoolDestroy($resource);
+        return $command->run();
+    }
+
+    /**
+     * Get storage Pool active state
+     *
+     * @param resource $resource 
+     * 
+     * @return string
+     */
+    public function storagePoolGetActive($resource)
+    {
+        $command = new StoragePoolGetActive($resource);
+        return $command->run();
+    }
+    
+    /**
+     * Get storage Pool Autostart
+     *
+     * @param resource $resource 
+     * 
+     * @return string
+     */
+    public function storagePoolGetAutostart($resource)
+    {
+        $command = new StoragePoolGetAutostart($resource);
+        return $command->run();
+    }
+    
+    /**
+     * Set storage Pool Autostart
+     *
+     * @param resource $resource 
+     * @param bool $mode 
+     * 
+     * @return string
+     */
+    public function storagePoolSetAutostart($resource, bool $mode)
+    {
+        $command = new StoragePoolSetAutostart($resource, (int) $mode);
         return $command->run();
     }
 
