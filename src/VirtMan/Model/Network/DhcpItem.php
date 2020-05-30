@@ -45,6 +45,8 @@ class DhcpItem extends Model
         'parent',
         //
         'node',
+        'http_port',
+        'tusd_port',
     ];
 
     public $timestamps = false; 

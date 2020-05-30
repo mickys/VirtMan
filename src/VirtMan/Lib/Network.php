@@ -136,11 +136,15 @@ class Network
     {
         $mac = self::generateRandomMacAddress($hypervisor_name);
         // check if it's unused
-        $usedMac = \VirtMan\Model\Network\Network::where(
+        $virtman_networks = \VirtMan\Model\Network\Network::where(
             ['mac' => $mac]
         )->first();
         
-        if (isset($usedMac->id)) {
+        $virtman_dhcp = \VirtMan\Model\Network\DhcpItem::where(
+            ['mac' => $mac]
+        )->first();
+
+        if (isset($virtman_networks->id) || isset($virtman_dhcp->id)) {
             $mac = self::genMacAddress($hypervisor_name);
         }
         return $mac;
@@ -269,4 +273,11 @@ class Network
             ->orderBy('id', "ASC")->first();
     }
 
+    public static function getFreeMacAddress($used = []) {
+        $newMac = self::genMacAddress();
+        if (in_array($newMac, $used)) {
+            return self::getFreeMacAddress($used);
+        }
+        return $newMac;
+    }
 }
