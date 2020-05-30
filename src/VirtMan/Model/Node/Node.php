@@ -82,6 +82,8 @@ class Node extends Model
         'interface_1_netmask',
         'interface_1_dhcp_start',
         'interface_1_dhcp_end',
+        'routing',
+        'xml',
     ];
 
     /**

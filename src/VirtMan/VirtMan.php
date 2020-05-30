@@ -34,9 +34,16 @@ use VirtMan\Command\Storage\Volume\CreateXML as StorageVolumeCreateXML;
 use VirtMan\Command\Storage\Volume\GetByName as StorageVolumeGetByName;
 use VirtMan\Command\Storage\Volume\Delete as StorageVolumeDelete;
 
-
 // Network
-use VirtMan\Command\Network\GetNetworkXML;
+
+use VirtMan\Command\Node\Network\Get as NodeNetworkGet;
+use VirtMan\Command\Node\Network\GetXML as NodeNetworkGetXML;
+use VirtMan\Command\Node\Network\DefineXML as NodeNetworkDefineXML;
+use VirtMan\Command\Node\Network\Undefine as NodeNetworkUndefine;
+use VirtMan\Command\Node\Network\GetActive as NodeNetworkGetActive;
+use VirtMan\Command\Node\Network\SetActive as NodeNetworkSetActive;
+use VirtMan\Command\Node\Network\GetAutostart as NodeNetworkGetAutostart;
+use VirtMan\Command\Node\Network\SetAutostart as NodeNetworkSetAutostart;
 
 // Domain
 use VirtMan\Command\Domain\DefineXML as DomainDefineXML;
@@ -74,7 +81,7 @@ class VirtMan
      *
      * @var string
      */
-    const VERSION = '0.1.0';
+    const VERSION = '0.2.0';
 
     /**
      * Libvirt Domain Connection
@@ -486,18 +493,112 @@ class VirtMan
     }
 
     /**
-     * Get Network XML
+     * Get Network Resource
      *
      * @param string $name 
      * 
      * @return string
      */
-    public function getNetworkXML($name = "default")
+    public function nodeNetworkGet(string $name = "default")
     {
-        $command = new GetNetworkXML($this->_connection, $name);
+        $command = new NodeNetworkGet($this->_connection, $name);
         return $command->run();
     }
-    
+
+    /**
+     * Get Network XML
+     *
+     * @param resource $network 
+     * 
+     * @return string
+     */
+    public function nodeNetworkGetXML($network)
+    {
+        $command = new NodeNetworkGetXML($network);
+        return $command->run();
+    }
+
+    /**
+     * Define new network xml
+     *
+     * @param string $xml 
+     * 
+     * @return string
+     */
+    public function nodeNetworkDefineXML($xml)
+    {
+        $command = new NodeNetworkDefineXML($this->_connection, $xml);
+        return $command->run();
+    }
+
+    /**
+     * Undefine the specified domain resource
+     *
+     * @param resource $network 
+     * 
+     * @return string
+     */
+    public function nodeNetworkUndefine($network)
+    {
+        $command = new NodeNetworkUndefine($network);
+        return $command->run();
+    }   
+
+    /**
+     * Get network active state
+     *
+     * @param resource $network 
+     * 
+     * @return string
+     */
+    public function nodeNetworkGetActive($network)
+    {
+        $command = new NodeNetworkGetActive($network);
+        return $command->run();
+    }
+
+    /**
+     * Set network active state
+     *
+     * @param resource $network 
+     * @param bool $mode 
+     * 
+     * @return string
+     */
+    public function nodeNetworkSetActive($network, bool $mode)
+    {
+        $command = new NodeNetworkSetActive($network, (int) $mode);
+        return $command->run();
+    }
+
+    /**
+     * Get network autostart
+     *
+     * @param resource $network 
+     * 
+     * @return string
+     */
+    public function nodeNetworkGetAutostart($network)
+    {
+        $command = new NodeNetworkGetAutostart($network);
+        return $command->run();
+    }
+
+    /**
+     * Set network autostart
+     *
+     * @param resource $network 
+     * @param bool $mode 
+     * 
+     * @return string
+     */
+    public function nodeNetworkSetAutostart($network, bool $mode)
+    {
+        $command = new NodeNetworkSetAutostart($network, (int) $mode);
+        return $command->run();
+    }
+
+
     /**
      * Define new domain xml
      *

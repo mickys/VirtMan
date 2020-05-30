@@ -10,12 +10,12 @@
  * @license  https://github.com/mickys/VirtMan/blob/master/LICENSE.md MIT
  * @link     https://github.com/mickys/VirtMan/
  */
-namespace VirtMan\Command\Network;
+namespace VirtMan\Command\Node\Network;
 
 use VirtMan\Command\Command;
 
 /**
- * GetNetworkXML Command
+ * Undefine Command
  *
  * @category VirtMan\Command
  * @package  VirtMan
@@ -23,21 +23,19 @@ use VirtMan\Command\Command;
  * @license  https://github.com/mickys/VirtMan/blob/master/LICENSE.md MIT
  * @link     https://github.com/mickys/VirtMan/
  */
-class GetNetworkXML extends Command
+class Undefine extends Command
 {
+
     /**
-     * GetNetworkXML Command
+     * Undefine Command
      *
-     * @param Libvirt Connection $connection 
-     * @param string             $name 
+     * @param Libvirt Network Resource $resource 
      * 
      * @return None
      */
-    public function __construct( $connection, $name = "default" )
+    public function __construct( $resource )
     {
-        parent::__construct("GetNetworkXML", $connection);
-        $this->name = $name;
-
+        parent::__construct("NodeNetworkUndefine", $resource);
     }
 
     /**
@@ -47,8 +45,6 @@ class GetNetworkXML extends Command
      */
     public function run()
     {
-        return libvirt_network_get_xml_desc(
-            libvirt_network_get($this->connection, $this->name)
-        );
+        return libvirt_network_undefine($this->connection);
     }
 }
