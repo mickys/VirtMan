@@ -62,8 +62,9 @@ class Container
                 $name."_root.qcow2",
                 $path,
                 Utils::getConfig("container_storage_root_template"),
-                10
-            )
+                Utils::getConfig("container_storage_root_size_gb")
+            ),
+            "master" => Utils::getConfig("container_storage_root_template")
         ];
         $data["user"] = [
             "path" => $path."/".$name."_storage.qcow2",
@@ -71,8 +72,9 @@ class Container
                 $name."_storage.qcow2", 
                 $path,
                 Utils::getConfig("container_storage_user_template"),
-                200
-            )
+                Utils::getConfig("container_storage_user_size_gb")
+            ),
+            "master" => Utils::getConfig("container_storage_user_template")
         ];
 
         return $data;
@@ -199,71 +201,98 @@ class Container
         $cpus = Utils::getConfig("container_vcpus");
         
 
-        $XML = '<domain type="kvm">'."\n";
-        $XML.= '<name>'.$settings["name"].'</name>'."\n";
-        $XML.= '<metadata>'."\n";
-        $XML.= '  <libosinfo:libosinfo xmlns:libosinfo="http://libosinfo.org/xmlns/libvirt/domain/1.0">'."\n";
-        $XML.= '    <libosinfo:os id="http://centos.org/centos/7.0"/>'."\n";
-        $XML.= '  </libosinfo:libosinfo>'."\n";
-        $XML.= '</metadata>'."\n";
-        $XML.= '<memory>'.$ram.'</memory>'."\n";
-        $XML.= '<currentMemory>'.$ram.'</currentMemory>'."\n";
-        $XML.= '<vcpu>'.$cpus.'</vcpu>'."\n";
-        $XML.= '<os>'."\n";
-        $XML.= '  <type arch="x86_64" machine="q35">hvm</type>'."\n";
-        $XML.= '  <boot dev="hd"/>'."\n";
-        $XML.= ' </os>'."\n";
-        $XML.= '<features>'."\n";
-        $XML.= '  <acpi/>'."\n";
-        $XML.= '  <apic/>'."\n";
-        $XML.= '</features>'."\n";
-        $XML.= '<cpu mode="host-model"/>'."\n";
-        $XML.= '<clock offset="utc">'."\n";
-        $XML.= '  <timer name="rtc" tickpolicy="catchup"/>'."\n";
-        $XML.= '  <timer name="pit" tickpolicy="delay"/>'."\n";
-        $XML.= '  <timer name="hpet" present="no"/>'."\n";
-        $XML.= '</clock>'."\n";
-        $XML.= '<pm>'."\n";
-        $XML.= '  <suspend-to-mem enabled="no"/>'."\n";
-        $XML.= '  <suspend-to-disk enabled="no"/>'."\n";
-        $XML.= '</pm>'."\n";
-        $XML.= '<devices>'."\n";
-        $XML.= '  <emulator>/usr/bin/qemu-system-x86_64</emulator>'."\n";
+        $XML = '<domain type="kvm">'.PHP_EOL;
+        $XML.= '<name>'.$settings["name"].'</name>'.PHP_EOL;
+        $XML.= '<metadata>'.PHP_EOL;
+        $XML.= '  <libosinfo:libosinfo xmlns:libosinfo="http://libosinfo.org/xmlns/libvirt/domain/1.0">'.PHP_EOL;
+        $XML.= '    <libosinfo:os id="http://centos.org/centos/7.0"/>'.PHP_EOL;
+        $XML.= '  </libosinfo:libosinfo>'.PHP_EOL;
+        $XML.= '</metadata>'.PHP_EOL;
+        $XML.= '<memory>'.$ram.'</memory>'.PHP_EOL;
+        $XML.= '<currentMemory>'.$ram.'</currentMemory>'.PHP_EOL;
+        $XML.= '<vcpu>'.$cpus.'</vcpu>'.PHP_EOL;
+        $XML.= '<os>'.PHP_EOL;
+        $XML.= '  <type arch="x86_64" machine="q35">hvm</type>'.PHP_EOL;
+        $XML.= '  <boot dev="hd"/>'.PHP_EOL;
+        $XML.= ' </os>'.PHP_EOL;
+        $XML.= '<features>'.PHP_EOL;
+        $XML.= '  <acpi/>'.PHP_EOL;
+        $XML.= '  <apic/>'.PHP_EOL;
+        $XML.= '</features>'.PHP_EOL;
+        $XML.= '<cpu mode="host-model"/>'.PHP_EOL;
+        $XML.= '<clock offset="utc">'.PHP_EOL;
+        $XML.= '  <timer name="rtc" tickpolicy="catchup"/>'.PHP_EOL;
+        $XML.= '  <timer name="pit" tickpolicy="delay"/>'.PHP_EOL;
+        $XML.= '  <timer name="hpet" present="no"/>'.PHP_EOL;
+        $XML.= '</clock>'.PHP_EOL;
+        $XML.= '<pm>'.PHP_EOL;
+        $XML.= '  <suspend-to-mem enabled="no"/>'.PHP_EOL;
+        $XML.= '  <suspend-to-disk enabled="no"/>'.PHP_EOL;
+        $XML.= '</pm>'.PHP_EOL;
+        $XML.= '<devices>'.PHP_EOL;
+        $XML.= '  <emulator>/usr/bin/qemu-system-x86_64</emulator>'.PHP_EOL;
         
         // disk drives
-        $XML.= '  <disk type="file" device="disk">'."\n";
-        $XML.= '    <driver name="qemu" type="qcow2"/>'."\n";
-        $XML.= '    <source file="'.$settings["newContainer"]["disks"]["root"]["path"].'"/>'."\n";
-        $XML.= '    <target dev="vda" bus="virtio"/>'."\n";
-        $XML.= '  </disk>'."\n";
 
-        $XML.= '  <disk type="file" device="disk">'."\n";
-        $XML.= '    <driver name="qemu" type="qcow2"/>'."\n";
-        $XML.= '    <source file="'.$settings["newContainer"]["disks"]["user"]["path"].'"/>'."\n";
-        $XML.= '    <target dev="vdb" bus="virtio"/>'."\n";
-        $XML.= '  </disk>'."\n";
+        $XML.= '  <disk type="file" device="disk">'.PHP_EOL;
+        $XML.= '    <driver name="qemu" type="qcow2"/>'.PHP_EOL;
+        $XML.= '    <source file="'.$settings["newContainer"]["disks"]["root"]["path"].'"/>'.PHP_EOL;
+        $XML.= '    <target dev="vda" bus="virtio"/>'.PHP_EOL;
+        $XML.= '  </disk>'.PHP_EOL;
+        $XML.= '  <disk type="file" device="disk">'.PHP_EOL;
+        $XML.= '    <driver name="qemu" type="qcow2"/>'.PHP_EOL;
+        $XML.= '    <source file="'.$settings["newContainer"]["disks"]["user"]["path"].'"/>'.PHP_EOL;
+        $XML.= '    <target dev="vdb" bus="virtio"/>'.PHP_EOL;
+        $XML.= '  </disk>'.PHP_EOL;
 
-        $XML.= '  <controller type="usb" index="0" model="qemu-xhci" ports="15"/>'."\n";
+        $XML.= '  <controller type="usb" index="0" model="qemu-xhci" ports="15"/>'.PHP_EOL;
 
         // network
-        $XML.= '  <interface type="bridge">'."\n";
-        $XML.= '    <source bridge="virbr0"/>'."\n";
-        $XML.= '    <mac address="'.$settings["networking"]->mac.'"/>'."\n";
-        $XML.= '   <model type="virtio"/>'."\n";
-        $XML.= '  </interface>'."\n";
+        $XML.= '  <interface type="bridge">'.PHP_EOL;
+        $XML.= '    <source bridge="virbr0"/>'.PHP_EOL;
+        $XML.= '    <mac address="'.$settings["networking"]->mac.'"/>'.PHP_EOL;
+        $XML.= '   <model type="virtio"/>'.PHP_EOL;
+        $XML.= '  </interface>'.PHP_EOL;
 
-        $XML.= '  <console type="pty"/>'."\n";
-        $XML.= '  <channel type="unix">'."\n";
-        $XML.= '   <source mode="bind"/>'."\n";
-        $XML.= '   <target type="virtio" name="org.qemu.guest_agent.0"/>'."\n";
-        $XML.= '  </channel>'."\n";
-        $XML.= '  <rng model="virtio">'."\n";
-        $XML.= '    <backend model="random">/dev/urandom</backend>'."\n";
-        $XML.= ' </rng>'."\n";
-        $XML.= '</devices>'."\n";
+        $XML.= '  <console type="pty"/>'.PHP_EOL;
+        $XML.= '  <channel type="unix">'.PHP_EOL;
+        $XML.= '   <source mode="bind"/>'.PHP_EOL;
+        $XML.= '   <target type="virtio" name="org.qemu.guest_agent.0"/>'.PHP_EOL;
+        $XML.= '  </channel>'.PHP_EOL;
+        $XML.= '  <rng model="virtio">'.PHP_EOL;
+        $XML.= '    <backend model="random">/dev/urandom</backend>'.PHP_EOL;
+        $XML.= ' </rng>'.PHP_EOL;
+        $XML.= '</devices>'.PHP_EOL;
         $XML.= '</domain>';
 
         return $XML;
     }
+
+
+        /**
+     * Get container overlay filesystem disk backed by template qcow2 image
+     *
+     * @param string $name 
+     * @param string $path 
+     * @param string $masterTemplate 
+     * @param string $device 
+     * 
+     * @return string
+     */
+    public static function getDiskXML(string $name, string $path, string $masterTemplate, string $device) {
+
+        $XML = '  <disk type="file" device="disk">'.PHP_EOL;
+        $XML.= '    <driver name="qemu" type="qcow2" />'.PHP_EOL;
+        $XML.= '    <source file="'.$path."/".$name.'"/>'.PHP_EOL;
+        $XML.= '    <backingStore type="file" index="1">'.PHP_EOL;
+        $XML.= '      <format type="qcow2" />'.PHP_EOL;
+        $XML.= '      <source file="'.$masterTemplate.'" />'.PHP_EOL;
+        $XML.= '      <backingStore />'.PHP_EOL;
+        $XML.= '    </backingStore>'.PHP_EOL;
+        $XML.= '    <target dev="'.$device.'" bus="virtio"/>'.PHP_EOL;
+        $XML.= '  </disk>'.PHP_EOL;
+       
+        return $XML;
+      }  
 
 }

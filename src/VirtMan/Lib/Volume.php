@@ -40,23 +40,22 @@ class Volume
 
         $capacity = Utils::convertGBToBytes($capacityInGB);
         
-        $XML = "<volume type='file'>
-        <name>".$name."</name>
-        <key>".$path."/".$name."</key>
-        <source></source>
-        <capacity unit='bytes'>".$capacity."</capacity>
-        <target>
-          <path>".$path."/".$name."</path>
-          <format type='qcow2'/>
-        </target>
-        <backingStore>
-          <path>".$masterTemplate."</path>
-          <format type='qcow2'/>
-        </backingStore>
-      </volume>
+        $XML = "
+        <volume type='file'>
+          <name>".$name."</name>
+          <key>".$path."/".$name."</key>
+          <source></source>
+          <capacity unit='bytes'>".$capacity."</capacity>
+          <target>
+            <path>".$path."/".$name."</path>
+            <format type='qcow2'/>
+          </target>
+          <backingStore>
+            <path>".$masterTemplate."</path>
+            <format type='qcow2'/>
+          </backingStore>
+        </volume>
         ";
         return $XML;
-    }
-
-    
+    } 
 }
