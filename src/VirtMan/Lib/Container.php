@@ -90,7 +90,9 @@ class Container
         $results = array();
 
         // check this node's space
-        $Node = \VirtMan\Model\Node\Node::orderBy('id', 'desc')->first();
+        // $Node = \VirtMan\Model\Node\Node::orderBy('id', 'desc')->first();
+        
+        $Node = \VirtMan\Model\Node\Node::where('id', '=', '2')->first();
 
         $nodeInstance = Utils::getVirtManInstanceByNodeId($Node->id);
 
@@ -230,7 +232,9 @@ class Container
         $XML.= '  <suspend-to-disk enabled="no"/>'.PHP_EOL;
         $XML.= '</pm>'.PHP_EOL;
         $XML.= '<devices>'.PHP_EOL;
-        $XML.= '  <emulator>/usr/bin/qemu-system-x86_64</emulator>'.PHP_EOL;
+
+        // libvirt should find this by default, no need to specify it here
+        // $XML.= '  <emulator>/usr/bin/qemu-system-x86_64</emulator>'.PHP_EOL;
         
         // disk drives
 
@@ -269,7 +273,7 @@ class Container
     }
 
 
-        /**
+    /**
      * Get container overlay filesystem disk backed by template qcow2 image
      *
      * @param string $name 
