@@ -41,8 +41,11 @@ use VirtMan\Command\Storage\Volume\CreateXML as StorageVolumeCreateXML;
 use VirtMan\Command\Storage\Volume\GetByName as StorageVolumeGetByName;
 use VirtMan\Command\Storage\Volume\Delete as StorageVolumeDelete;
 
-// Network
+// Node
+use VirtMan\Command\Node\Info as NodeGetInfo;
+use VirtMan\Command\Node\Capabilities as NodeGetCapabilities;
 
+// Network
 use VirtMan\Command\Node\Network\Get as NodeNetworkGet;
 use VirtMan\Command\Node\Network\GetXML as NodeNetworkGetXML;
 use VirtMan\Command\Node\Network\DefineXML as NodeNetworkDefineXML;
@@ -65,12 +68,14 @@ use VirtMan\Command\Domain\DefineXML as DomainGetXML;
 use VirtMan\Exceptions\ImpossibleMemoryAllocationException;
 use VirtMan\Exceptions\ImpossibleStorageAllocationException;
 use VirtMan\Exceptions\InvalidArchitectureException;
+use VirtMan\Exceptions\NoLibvirtConnectionException;
 
 // Models
 use VirtMan\Model\Group\Group;
 use VirtMan\Model\Machine\Machine;
 use VirtMan\Model\Network\Network;
 use VirtMan\Model\Storage\Storage;
+
 
 /**
  * VirtMan main class
@@ -165,6 +170,11 @@ class VirtMan
         
         // Initialize Environment Values
         $this->_machineTypes = $this->getMachineTypes();
+
+        if ($this->_connection === false)
+        {
+            throw new NoLibvirtConnectionException(libvirt_get_last_error());
+        }
     }
 
     /**
@@ -179,6 +189,20 @@ class VirtMan
         return function_exists('libvirt_version');
     }
 
+
+    /**
+     * Get libvirt version
+     *
+     * Returns libvirt version to the connected node
+     *
+     * @return boolean
+     */
+    public function getLibvirtVersion()
+    {
+        return libvirt_version();
+    }
+    
+
     /**
      * Connect
      *
@@ -190,7 +214,7 @@ class VirtMan
      */
     private function _connect(string $remoteUrl)
     {
-        return libvirt_connect($remoteUrl, false, []);
+        return @libvirt_connect($remoteUrl, false, []);
     }
 
     /**
@@ -577,6 +601,31 @@ class VirtMan
         $command = new StoragePoolSetAutostart($resource, (int) $mode);
         return $command->run();
     }
+
+
+    
+    /**
+     * Get Node info
+     *
+     * @return array
+     */
+    public function nodeGetInfo()
+    {
+        $command = new NodeGetInfo($this->_connection);
+        return $command->run();
+    }
+
+    /**
+     * Get Node capabilities
+     *
+     * @return array
+     */
+    public function nodeGetCapabilities()
+    {
+        $command = new NodeGetCapabilities($this->_connection);
+        return $command->run();
+    }
+    
 
     /**
      * Get Network Resource

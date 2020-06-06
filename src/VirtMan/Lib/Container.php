@@ -28,14 +28,15 @@ class Container
      * Generate the next container's settings
      *
      * @param string $name Container name
+     * @param int $node_id Node id
      * 
      * @return array
      */
-    public static function getNewContainerSettings(string $name)
+    public static function getNewContainerSettings(string $name, int $node_id = 1)
     {
         $settings = array();
 
-        $nodeInfo = self::getNodeForNewContainer();
+        $nodeInfo = self::getNodeForNewContainer($node_id);
         $settings["node_id"] = $nodeInfo["node_id"];
         $settings["node_instance"] = $nodeInfo["node_instance"];
         $settings["pool_resource"] = $nodeInfo["pool_resource"];
@@ -85,54 +86,39 @@ class Container
      *
      * @return array
      */
-    public static function getNodeForNewContainer()
+    public static function getNodeForNewContainer($node_id)
     {
         $results = array();
 
-        // check this node's space
-        // $Node = \VirtMan\Model\Node\Node::orderBy('id', 'desc')->first();
-        
-        $Node = \VirtMan\Model\Node\Node::where('id', '=', '2')->first();
-
-        $nodeInstance = Utils::getVirtManInstanceByNodeId($Node->id);
+        $nodeInstance = new \VirtMan\VirtMan(
+            \VirtMan\Model\Node\Node::where("id", '=', $id)->first()->url
+        );
 
         $results["node_instance"] = $nodeInstance;
+        $results["node_id"] = $node_id;
 
-        if (self::nodeHasStoragePool($nodeInstance)) {
+        $containerStorageSize = 0;
+        $containerStorageSize+= Utils::convertGBToBytes(
+            Utils::getConfig("container_storage_root_size_gb")
+        );
 
-            $results["node_id"] = $Node->id;
+        $containerStorageSize+= Utils::convertGBToBytes(
+            Utils::getConfig("container_storage_user_size_gb")
+        );
 
-            $containerStorageSize = 0;
-            $containerStorageSize+= Utils::convertGBToBytes(
-                Utils::getConfig("container_storage_root_size_gb")
-            );
+        $spaceDetails = self::getNodeSpaceDetails($nodeInstance);
 
-            $containerStorageSize+= Utils::convertGBToBytes(
-                Utils::getConfig("container_storage_user_size_gb")
-            );
+        $spaceLeft = $spaceDetails["capacity_max"] - $containerStorageSize;
+        
+        // is there enough space left on the node ?
+        if (($spaceLeft) > 0 ) {
 
-            $spaceDetails = self::getNodeSpaceDetails($nodeInstance);
-
-            $spaceLeft = $spaceDetails["capacity_max"] - $containerStorageSize;
+            $results["pool_resource"] = $spaceDetails["pool_resource"];
             
-            // is there enough space left on the node ?
-            if (($spaceLeft) > 0 ) {
-
-                $results["pool_resource"] = $spaceDetails["pool_resource"];
-                
-            } else {
-                throw new \VirtMan\Exceptions\NoStorageSpaceException(
-                    "Not enough storage space on selected node."
-                );
-            }
-
         } else {
-
-            $poolName = Utils::getConfig("container_storage_pool_name");
-            throw new \VirtMan\Exceptions\NoStoragePoolException(
-                $poolName." not found on selected node."
+            throw new \VirtMan\Exceptions\NoStorageSpaceException(
+                "Not enough storage space on selected node."
             );
-
         }
 
         return $results;

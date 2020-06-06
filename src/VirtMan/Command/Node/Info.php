@@ -10,12 +10,12 @@
  * @license  https://github.com/mickys/VirtMan/blob/master/LICENSE.md MIT
  * @link     https://github.com/mickys/VirtMan/
  */
-namespace VirtMan\Command\Domain;
+namespace VirtMan\Command\Node;
 
 use VirtMan\Command\Command;
 
 /**
- * Lookup Command
+ * Info Command
  *
  * @category VirtMan\Command
  * @package  VirtMan
@@ -23,21 +23,18 @@ use VirtMan\Command\Command;
  * @license  https://github.com/mickys/VirtMan/blob/master/LICENSE.md MIT
  * @link     https://github.com/mickys/VirtMan/
  */
-class Lookup extends Command
+class Info extends Command
 {
     /**
-     * Lookup Command
+     * Info Command
      *
      * @param Libvirt Connection $connection 
-     * @param string             $name 
      * 
      * @return None
      */
-    public function __construct( $connection, $name )
+    public function __construct( $connection )
     {
-        parent::__construct("DomainLookup", $connection);
-        $this->name = $name;
-
+        parent::__construct("NodeGetInfo", $connection);
     }
 
     /**
@@ -47,6 +44,6 @@ class Lookup extends Command
      */
     public function run()
     {
-        return @libvirt_domain_lookup_by_name($this->connection, $this->name);
+        return libvirt_node_get_info($this->connection);
     }
 }
