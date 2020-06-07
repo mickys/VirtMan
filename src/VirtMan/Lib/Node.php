@@ -37,16 +37,20 @@ class Node
         // each container has 3 disks ( root / archive / storage )
         // storage requirement can be calculated by adding up the 3 disks,
         // unless "archive" is detached, in which case we don't count it
+        // - 1x node capacity 
 
         // 2 - memory
+        // - 2x node capacity 
 
         // 3 - cpus
+        // - 2x node capacity 
 
         // 4 - ASIDS - max ~400
+        // - 1x node capacity
 
         // based on container settings ( resources ), iterate over nodes 
         // and find the first one that can host our new container
-        $nodeList = \VirtMan\Model\Node\Node::where("id", '=', $id);
-
+        $nodeList = \VirtMan\Model\Node\Node::get();
+        
     }
 }

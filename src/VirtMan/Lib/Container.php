@@ -78,6 +78,17 @@ class Container
             "master" => Utils::getConfig("container_storage_user_template")
         ];
 
+        $data["user"] = [
+            "path" => $path."/".$name."_archive.qcow2",
+            "xml" => Volume::getQCOWImageXML(
+                $name."_archive.qcow2", 
+                $path,
+                Utils::getConfig("container_storage_archive_template"),
+                Utils::getConfig("container_storage_archive_size_gb")
+            ),
+            "master" => Utils::getConfig("container_storage_archive_template")
+        ];
+
         return $data;
     }
 
