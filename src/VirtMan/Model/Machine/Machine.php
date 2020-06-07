@@ -66,7 +66,10 @@ class Machine extends Model
         'address',
         'package',
         'started_at',
-        'stopped_at'
+        'stopped_at',
+        'code',
+        'sealed',
+        'archive_detached'
     ];
 
     /**
