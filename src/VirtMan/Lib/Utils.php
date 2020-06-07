@@ -122,16 +122,6 @@ class Utils
     }
 
     /**
-     * Get DHCP Node Instance
-     * 
-     * @return Virtman\Virtman
-     */
-    public static function getVirtManInstanceWithDHCP()
-    {
-        return self::getVirtManInstanceByNodeId(self::getConfig("dhcp_node_id"));
-    }
-
-    /**
      * Convert GB to Bytes
      *
      * @param int $gb 
