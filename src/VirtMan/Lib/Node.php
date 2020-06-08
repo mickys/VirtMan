@@ -23,17 +23,149 @@ namespace VirtMan\Lib;
  */
 class Node
 {
+
     /**
-     * Get the next free node
+     * Get the number of containers that we can potentially store
+     *
+     * @param array $NodeResourceList 
+     * 
+     * @return array
+     */
+
+    public static function getRemainingContainerCountWithDetails($NodeResourceList = null)
+    {
+        if ($NodeResourceList === null) {
+            $NodeResourceList = self::getNodeResourceList();
+        }
+
+        $container_needs = self::getContainerNeedsObject();
+
+        $result = [
+            "count" => 0,
+            "lowest_resource" => [],
+            "resources" => []
+        ];
+
+        foreach ($NodeResourceList as $node) {
+            // if(
+            //     $node["free"]["cpus"] >= $container_needs["cpus"] &&
+            //     $node["free"]["storage"] >= $container_needs["storage"] &&
+            //     $node["free"]["memory"] >= $container_needs["memory"] &&
+            //     $node["free"]["asids"] >= $container_needs["asids"]
+            // ) {
+                
+                $res = [
+                    "cpus" => floor($node["free"]["cpus"] / $container_needs["cpus"]),
+                    "storage" => floor($node["free"]["storage"] / $container_needs["storage"]),
+                    "memory" => floor($node["free"]["memory"] / $container_needs["memory"]),
+                    "asids" => floor($node["free"]["asids"] / $container_needs["asids"]),
+                ];
+
+                asort($res);
+                $lowestResource = array_keys($res)[0];
+                $lowestValue = $res[$lowestResource];
+
+                $result["lowest_resource"][] = [
+                    "node_id" => $node["node_id"],
+                    "resource" => (string) $lowestResource,
+                ];
+                $result["resources"][] = [
+                    "node_id" => $node["node_id"],
+                    "resource" => $res,
+                ];
+                $result["count"]+= $lowestValue;
+           // }
+        }
+        return $result;
+    }
+
+    /**
+     * Get container needs object
      *
      * @return array
      */
 
-    public static function reserveResourcesOnFreeNodeAndGetID()
+    public static function getContainerNeedsObject()
     {
-
+        return [
+            "storage" => (int) Utils::getConfig("container_storage_root_size_gb") +
+                        (int) Utils::getConfig("container_storage_user_size_gb") +
+                        (int) Utils::getConfig("container_storage_archive_size_gb"),
+            "cpus" => (int) Utils::getConfig("container_vcpus"),
+            "memory" => (int) Utils::getConfig("container_ram_in_mb") * 1024,
+            "asids" => 1,
+        ];
     }
 
+
+    /**
+     * Get nodes with resource counters
+     *
+     * @return array
+     */
+
+    public static function getNodesWithResourceCounters()
+    {
+        $results = [];
+        $NodeResourceList = self::getNodeResourceList();
+        $nodeList = \VirtMan\Model\Node\Node::get();
+        foreach ($nodeList as $node) {
+            $results[] = [
+                "id" => $node->id,
+                "name" => $node->name,
+                "url" => $node->url,
+                "real_resources" => [
+                    "resource_vcpus" => $node->resource_vcpus,
+                    "resource_memory" => $node->resource_memory,
+                    "resource_storage" => $node->resource_storage,
+                    "resource_asids" => 256,
+                ],
+                "resources" => $NodeResourceList[$node->id],
+                "created_at" => $node->created_at,
+                "status" => $node->status,
+            ];
+        }
+        return $results;
+    }
+
+    /**
+     * Get the next free node to place our container in
+     *
+     * @param array $NodeResourceList 
+     * 
+     * @return array
+     */
+
+    public static function getNextFreeNodeIDForNewContainer($NodeResourceList = null)
+    {
+        if ($NodeResourceList === null) {
+            $NodeResourceList = self::getNodeResourceList();
+        }
+
+        $container_needs = self::getContainerNeedsObject();
+
+        $found = false;
+
+        foreach ($NodeResourceList as $node) {
+            if(
+                $node["free"]["cpus"] >= $container_needs["cpus"] &&
+                $node["free"]["storage"] >= $container_needs["storage"] &&
+                $node["free"]["memory"] >= $container_needs["memory"] &&
+                $node["free"]["asids"] >= $container_needs["asids"]
+            ) {
+                $found = $node["node_id"];
+                break;
+            }
+        }
+
+        return $found;
+    }
+
+    /**
+     * Get node resource list
+     * 
+     * @return array
+     */
     public static function getNodeResourceList()
     {
         // Node Resources
@@ -85,11 +217,18 @@ class Node
         $nodeList = \VirtMan\Model\Node\Node::get();
         foreach ($nodeList as $node) {
 
-            $nodeFreeResources = [
+            $nodeDefaultResources = [
                 "cpus" => $node->resource_vcpus * $multipliers["cpus"],
                 "memory" => $node->resource_memory * $multipliers["memory"],
                 "storage" => $node->resource_storage * $multipliers["storage"],
                 "asids" => 256 * $multipliers["asids"],
+            ];
+
+            $nodeFreeResources = [
+                "cpus" => $nodeDefaultResources["cpus"],
+                "memory" => $nodeDefaultResources["memory"],
+                "storage" => $nodeDefaultResources["storage"],
+                "asids" => $nodeDefaultResources["asids"],
             ];
 
             $nodeResourceUsage = [
@@ -101,12 +240,14 @@ class Node
 
             $archive_detached = 0;
 
-            $machinesOnThisNode = \VirtMan\Model\Machine\Machine::where("node_id", "=", $node->id);
-            $machineCount = count($machinesOnThisNode);
+            $machinesOnThisNode = \VirtMan\Model\Machine\Machine::where("node_id", "=", $node->id)->get();
+            $machineCount = $machinesOnThisNode->count();
+
             if ($machineCount > 0) {
+
                 foreach ($machinesOnThisNode as $container) {
                     
-                    $nodeResourceUsage["memory"]+= $container->memory;
+                    $nodeResourceUsage["memory"]+= $container->memory * 1024;
                     $nodeResourceUsage["cpus"]+= $container->cpus;
                     $nodeResourceUsage["asids"]++;
 
@@ -132,7 +273,14 @@ class Node
                 $nodeFreeResources["asids"]-= $nodeResourceUsage["asids"];
             }
 
-            $resourceList[$node->id] = $nodeFreeResources;
+            $resourceList[$node->id] = [
+                "node_id" => $node->id,
+                "default" => $nodeDefaultResources,
+                "used" => $nodeResourceUsage,
+                "free" => $nodeFreeResources,
+            ];
         }
+
+        return $resourceList;
     }
 }

@@ -182,12 +182,13 @@ class Network
     /**
      * Get free ip and mac address for our new container
      *
+     * @param int $node_id 
+     * 
      * @return array
      */
-    public static function getFreeIpAndMacResource()
+    public static function getFreeIpAndMacResource($node_id)
     {
-        return \VirtMan\Model\Network\DhcpItem::whereNull("parent")
-            ->orderBy('id', "ASC")->first();
+        return \VirtMan\Model\Network\DhcpItem::where("parent", "=", $node_id)->orderBy('id', "ASC")->first();
     }
 
     public static function getFreeMacAddress($used = []) {
