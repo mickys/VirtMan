@@ -68,7 +68,7 @@ class Node
             $res = [
                 "cpus" => floor($node["free"]["cpus"] / $container_needs["cpus"]),
                 "storage" => floor($node["free"]["storage"] / $container_needs["storage"]),
-                "memory" => floor($node["free"]["memory"] / $container_needs["memory"]),
+                "memory" => floor($node["free"]["memory"] / ($container_needs["memory"] * 1024) ),
                 "asids" => floor($node["free"]["asids"] / $container_needs["asids"]),
             ];
 
@@ -103,7 +103,7 @@ class Node
                         (int) Utils::getConfig("container_storage_workdir_size_gb") +
                         (int) Utils::getConfig("container_storage_archive_size_gb"),
             "cpus" => (int) Utils::getConfig("container_vcpus"),
-            "memory" => (int) Utils::getConfig("container_ram_in_mb") * 1024,
+            "memory" => (int) Utils::getConfig("container_ram_in_mb"),
             "asids" => 1,
         ];
     }
