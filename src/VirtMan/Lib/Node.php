@@ -25,6 +25,23 @@ class Node
 {
 
     /**
+     * Get the node resource multipliers
+     *
+     * @return array
+     */
+
+    public static function getResourceConfigs()
+    {
+        return [
+            "cpus" => (int) Utils::getConfig("node_resource_multiplier_cpus"),
+            "memory" => (int) Utils::getConfig("node_resource_multiplier_memory"),
+            "storage" => (int) Utils::getConfig("node_resource_multiplier_storage"),
+            "asids" => (int) Utils::getConfig("node_resource_multiplier_asids"),
+        ];
+    }
+    
+
+    /**
      * Get the number of containers that we can potentially store
      *
      * @param array $NodeResourceList 
@@ -47,34 +64,28 @@ class Node
         ];
 
         foreach ($NodeResourceList as $node) {
-            // if(
-            //     $node["free"]["cpus"] >= $container_needs["cpus"] &&
-            //     $node["free"]["storage"] >= $container_needs["storage"] &&
-            //     $node["free"]["memory"] >= $container_needs["memory"] &&
-            //     $node["free"]["asids"] >= $container_needs["asids"]
-            // ) {
-                
-                $res = [
-                    "cpus" => floor($node["free"]["cpus"] / $container_needs["cpus"]),
-                    "storage" => floor($node["free"]["storage"] / $container_needs["storage"]),
-                    "memory" => floor($node["free"]["memory"] / $container_needs["memory"]),
-                    "asids" => floor($node["free"]["asids"] / $container_needs["asids"]),
-                ];
 
-                asort($res);
-                $lowestResource = array_keys($res)[0];
-                $lowestValue = $res[$lowestResource];
+            $res = [
+                "cpus" => floor($node["free"]["cpus"] / $container_needs["cpus"]),
+                "storage" => floor($node["free"]["storage"] / $container_needs["storage"]),
+                "memory" => floor($node["free"]["memory"] / $container_needs["memory"]),
+                "asids" => floor($node["free"]["asids"] / $container_needs["asids"]),
+            ];
 
-                $result["lowest_resource"][] = [
-                    "node_id" => $node["node_id"],
-                    "resource" => (string) $lowestResource,
-                ];
-                $result["resources"][] = [
-                    "node_id" => $node["node_id"],
-                    "resource" => $res,
-                ];
-                $result["count"]+= $lowestValue;
-           // }
+            asort($res);
+            $lowestResource = array_keys($res)[0];
+            $lowestValue = $res[$lowestResource];
+
+            $result["lowest_resource"][] = [
+                "node_id" => $node["node_id"],
+                "resource" => (string) $lowestResource,
+            ];
+            $result["resources"][] = [
+                "node_id" => $node["node_id"],
+                "resource" => $res,
+            ];
+            $result["count"]+= $lowestValue;
+
         }
         return $result;
     }
@@ -170,12 +181,7 @@ class Node
     {
         // Node Resources
 
-        $multipliers = [
-            "cpus" => (int) Utils::getConfig("node_resource_multiplier_cpus"),
-            "memory" => (int) Utils::getConfig("node_resource_multiplier_memory"),
-            "storage" => (int) Utils::getConfig("node_resource_multiplier_storage"),
-            "asids" => (int) Utils::getConfig("node_resource_multiplier_asids"),
-        ];
+        $multipliers = self::getResourceConfigs();
 
         // 1 - storage
         // each container has 3 disks ( root / archive / storage )
