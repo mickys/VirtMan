@@ -100,7 +100,7 @@ class Node
     {
         return [
             "storage" => (int) Utils::getConfig("container_storage_root_size_gb") +
-                        (int) Utils::getConfig("container_storage_user_size_gb") +
+                        (int) Utils::getConfig("container_storage_workdir_size_gb") +
                         (int) Utils::getConfig("container_storage_archive_size_gb"),
             "cpus" => (int) Utils::getConfig("container_vcpus"),
             "memory" => (int) Utils::getConfig("container_ram_in_mb") * 1024,
@@ -190,11 +190,11 @@ class Node
         // - 1x node capacity 
 
         $storage_size_full = (int) Utils::getConfig("container_storage_root_size_gb") +
-                    (int) Utils::getConfig("container_storage_user_size_gb") +
+                    (int) Utils::getConfig("container_storage_workdir_size_gb") +
                     (int) Utils::getConfig("container_storage_archive_size_gb");
 
         $storage_size_archive_detached = (int) Utils::getConfig("container_storage_root_size_gb") +
-                    (int) Utils::getConfig("container_storage_user_size_gb");
+                    (int) Utils::getConfig("container_storage_workdir_size_gb");
 
         // even if all users have their archive disks detached, we need to assume
         // some of them will eventually want to reattach them.. thus we want 
@@ -253,7 +253,7 @@ class Node
 
                 foreach ($machinesOnThisNode as $container) {
                     
-                    $nodeResourceUsage["memory"]+= $container->memory * 1024;
+                    $nodeResourceUsage["memory"]+= $container->memory;
                     $nodeResourceUsage["cpus"]+= $container->cpus;
                     $nodeResourceUsage["asids"]++;
 

@@ -188,7 +188,7 @@ class Network
      */
     public static function getFreeIpAndMacResource($node_id)
     {
-        return \VirtMan\Model\Network\DhcpItem::where("parent", "=", $node_id)->orderBy('id', "ASC")->first();
+        return \VirtMan\Model\Network\DhcpItem::where("node", "=", $node_id)->orderBy('id', "ASC")->first();
     }
 
     public static function getFreeMacAddress($used = []) {

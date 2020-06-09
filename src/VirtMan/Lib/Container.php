@@ -36,10 +36,17 @@ class Container
     {
         $settings = array();
 
-        $nodeInfo = self::getNodeForNewContainer($node_id);
-        $settings["node_id"] = $nodeInfo["node_id"];
-        $settings["node_instance"] = $nodeInfo["node_instance"];
-        $settings["pool_resource"] = $nodeInfo["pool_resource"];
+        $settings["node_id"] = $node_id;
+
+        $settings["node_instance"] = new \VirtMan\VirtMan(
+            \VirtMan\Model\Node\Node::where("id", '=', $node_id)->first()->url
+        );
+
+        $settings["pool_resource"] = $settings["node_instance"]
+            ->getStoragePoolResourceByName(
+                Utils::getConfig("container_storage_pool_name")
+            );
+
         $settings["disks"] = self::getNewContainerDisks($name);
 
         return $settings;
@@ -67,18 +74,19 @@ class Container
             ),
             "master" => Utils::getConfig("container_storage_root_template")
         ];
-        $data["user"] = [
-            "path" => $path."/".$name."_storage.qcow2",
+
+        $data["workdir"] = [
+            "path" => $path."/".$name."_workdir.qcow2",
             "xml" => Volume::getQCOWImageXML(
-                $name."_storage.qcow2", 
+                $name."_workdir.qcow2", 
                 $path,
-                Utils::getConfig("container_storage_user_template"),
-                Utils::getConfig("container_storage_user_size_gb")
+                Utils::getConfig("container_storage_workdir_template"),
+                Utils::getConfig("container_storage_workdir_size_gb")
             ),
-            "master" => Utils::getConfig("container_storage_user_template")
+            "master" => Utils::getConfig("container_storage_workdir_template")
         ];
 
-        $data["user"] = [
+        $data["archive"] = [
             "path" => $path."/".$name."_archive.qcow2",
             "xml" => Volume::getQCOWImageXML(
                 $name."_archive.qcow2", 
@@ -114,7 +122,7 @@ class Container
         );
 
         $containerStorageSize+= Utils::convertGBToBytes(
-            Utils::getConfig("container_storage_user_size_gb")
+            Utils::getConfig("container_storage_archive_size_gb")
         );
 
         $spaceDetails = self::getNodeSpaceDetails($nodeInstance);
@@ -240,10 +248,17 @@ class Container
         $XML.= '    <source file="'.$settings["newContainer"]["disks"]["root"]["path"].'"/>'.PHP_EOL;
         $XML.= '    <target dev="vda" bus="virtio"/>'.PHP_EOL;
         $XML.= '  </disk>'.PHP_EOL;
+
         $XML.= '  <disk type="file" device="disk">'.PHP_EOL;
         $XML.= '    <driver name="qemu" type="qcow2"/>'.PHP_EOL;
-        $XML.= '    <source file="'.$settings["newContainer"]["disks"]["user"]["path"].'"/>'.PHP_EOL;
+        $XML.= '    <source file="'.$settings["newContainer"]["disks"]["workdir"]["path"].'"/>'.PHP_EOL;
         $XML.= '    <target dev="vdb" bus="virtio"/>'.PHP_EOL;
+        $XML.= '  </disk>'.PHP_EOL;
+
+        $XML.= '  <disk type="file" device="disk">'.PHP_EOL;
+        $XML.= '    <driver name="qemu" type="qcow2"/>'.PHP_EOL;
+        $XML.= '    <source file="'.$settings["newContainer"]["disks"]["archive"]["path"].'"/>'.PHP_EOL;
+        $XML.= '    <target dev="vdc" bus="virtio"/>'.PHP_EOL;
         $XML.= '  </disk>'.PHP_EOL;
 
         $XML.= '  <controller type="usb" index="0" model="qemu-xhci" ports="15"/>'.PHP_EOL;
@@ -251,7 +266,7 @@ class Container
         // network
         $XML.= '  <interface type="bridge">'.PHP_EOL;
         $XML.= '    <source bridge="virbr0"/>'.PHP_EOL;
-        $XML.= '    <mac address="'.$settings["networking"]->mac.'"/>'.PHP_EOL;
+        $XML.= '    <mac address="'.$settings["newContainer"]["networking"]->mac.'"/>'.PHP_EOL;
         $XML.= '   <model type="virtio"/>'.PHP_EOL;
         $XML.= '  </interface>'.PHP_EOL;
 
