@@ -69,7 +69,8 @@ class Machine extends Model
         'stopped_at',
         'code',
         'sealed',
-        'archive_detached'
+        'archive_detached',
+        'vhost'
     ];
 
     /**
