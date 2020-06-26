@@ -29,12 +29,12 @@ php artisan migrate
 ## TODO
 - [x] Create Virtual Machines using XML
 - [x] Create Storage Images
-- [ ] Create Storage Pools
+- [x] Create Storage Pools
 - [x] Create Networks
 - [ ] Create Machine Groups
-- [ ] Delete Virtual Machines
-- [ ] Delete Storage Images
-- [ ] Delete Storage Pools
+- [x] Delete Virtual Machines
+- [x] Delete Storage Images
+- [x] Delete Storage Pools
 - [ ] Delete Networks
 - [ ] Delete Machine Groups
 - [x] List Networks
