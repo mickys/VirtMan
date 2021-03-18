@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of the PHP VirtMan package
  *
@@ -10,12 +11,12 @@
  * @license  https://github.com/mickys/VirtMan/blob/master/LICENSE.md MIT
  * @link     https://github.com/mickys/VirtMan/
  */
-namespace VirtMan\Command\Domain;
+namespace VirtMan\Command\Domain\Network;
 
 use VirtMan\Command\Command;
 
 /**
- * DefineXML Command
+ * Interfaces Command
  *
  * @category VirtMan\Command
  * @package  VirtMan
@@ -23,20 +24,20 @@ use VirtMan\Command\Command;
  * @license  https://github.com/mickys/VirtMan/blob/master/LICENSE.md MIT
  * @link     https://github.com/mickys/VirtMan/
  */
-class DefineXML extends Command
+class GetInterfaces extends Command
 {
     /**
-     * DefineXML Command
+     * Interfaces Command
      *
-     * @param Libvirt Connection $connection 
-     * @param string             $xml 
+     * @param Libvirt Domain Resource   $resource 
      * 
      * @return None
      */
-    public function __construct( $connection, $xml )
+    public function __construct( $resource )
     {
-        parent::__construct("DomainDefineXML", $connection);
-        $this->xml = $xml;
+        parent::__construct("DomainNetworkInterfaces", $resource);
+        $this->resource = $resource;
+
     }
 
     /**
@@ -46,6 +47,6 @@ class DefineXML extends Command
      */
     public function run()
     {
-        return libvirt_domain_define_xml($this->connection, $this->xml);
+        return libvirt_domain_get_interface_devices($this->resource);
     }
 }

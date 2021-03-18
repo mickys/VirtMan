@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of the PHP VirtMan package
  *
@@ -10,12 +11,12 @@
  * @license  https://github.com/mickys/VirtMan/blob/master/LICENSE.md MIT
  * @link     https://github.com/mickys/VirtMan/
  */
-namespace VirtMan\Command\Domain;
+namespace VirtMan\Command\Domain\Network\Iface;
 
 use VirtMan\Command\Command;
 
 /**
- * DefineXML Command
+ * Stats Command
  *
  * @category VirtMan\Command
  * @package  VirtMan
@@ -23,20 +24,21 @@ use VirtMan\Command\Command;
  * @license  https://github.com/mickys/VirtMan/blob/master/LICENSE.md MIT
  * @link     https://github.com/mickys/VirtMan/
  */
-class DefineXML extends Command
+class Stats extends Command
 {
     /**
-     * DefineXML Command
+     * Stats Command
      *
-     * @param Libvirt Connection $connection 
-     * @param string             $xml 
+     * @param Libvirt Domain Resource   $resource 
+     * @param string                    $name 
      * 
      * @return None
      */
-    public function __construct( $connection, $xml )
+    public function __construct( $resource, $name )
     {
-        parent::__construct("DomainDefineXML", $connection);
-        $this->xml = $xml;
+        parent::__construct("DomainNetworkInterfaceStats", $resource);
+        $this->resource = $resource;
+        $this->name = $name;
     }
 
     /**
@@ -46,6 +48,6 @@ class DefineXML extends Command
      */
     public function run()
     {
-        return libvirt_domain_define_xml($this->connection, $this->xml);
+        return libvirt_domain_interface_stats($this->resource, $this->name);
     }
 }

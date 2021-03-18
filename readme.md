@@ -44,6 +44,8 @@ php artisan migrate
 - [ ] Add a Machine to a Network
 - [ ] Clone a Machine
 - [X] Add Storage to a Storage Pool
+- [X] Get Machine Network interface list
+- [X] Get Machine Network interface statistics
 
 ## Credits
 

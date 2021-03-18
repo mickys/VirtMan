@@ -64,6 +64,10 @@ use VirtMan\Command\Domain\Undefine as DomainUndefine;
 use VirtMan\Command\Domain\IsActive as DomainIsActive;
 use VirtMan\Command\Domain\DefineXML as DomainGetXML;
 
+// Domain Network Interfaces
+use VirtMan\Command\Domain\Network\GetInterfaces as GetDomainNetworkInterfaces;
+use VirtMan\Command\Domain\Network\Iface\Stats as GetDomainNetworkInterfaceStats;
+
 // Exceptions
 use VirtMan\Exceptions\ImpossibleMemoryAllocationException;
 use VirtMan\Exceptions\ImpossibleStorageAllocationException;
@@ -853,6 +857,33 @@ class VirtMan
         return $command->run();
     }
     
+    /**
+     * Get machine network interfaces
+     *
+     * @param VirtMan\Command\Domain\Lookup\resource $domain 
+     * 
+     * @return array
+     */
+    public function getDomainNetworkInterfaces($domain)
+    {
+        $command = new GetDomainNetworkInterfaces($domain);
+        return $command->run();
+    }
+    
+    /**
+     * Get machine network interface statistics
+     *
+     * @param VirtMan\Command\Domain\Lookup\resource $domain 
+     * @param string $vnet 
+     * 
+     * @return array
+     */
+    public function getDomainNetworkInterfaceStats($domain, $vnet)
+    {
+        $command = new GetDomainNetworkInterfaceStats($domain, $vnet);
+        return $command->run();
+    }
+
     /**
      * Get connection
      *
